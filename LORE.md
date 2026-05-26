@@ -2,12 +2,12 @@
 
 | Propriété | Détail |
 | :--- | :--- |
-| **Projet** | AETHON CHRONICLES (Titre provisoire) |
+| **Projet** | ELARA'S BLACK MIST |
 | **Statut** | Document de Travail (WIP) |
-| **Version** | 2.0.0 |
+| **Version** | 3.0.0 |
 | **Périmètre** | Prototype (Pré-Alpha) & Vision étendue (Horizon 2030) |
 
-> **Avertissement :** Ce document est le point de référence central pour la direction narrative, la conception des personnages, la structure des quêtes et l'intégration des systèmes d'intelligence artificielle. Toute modification de l'univers de jeu doit être documentée ici pour assurer la cohérence entre le gameplay, la technique et l'histoire.
+> **Avertissement :** Ce document est le point de référence central pour la direction narrative, la conception des personnages, la structure des quêtes et l'intégration des systèmes d'intelligence artificielle (MCP). Toute modification de l'univers de jeu doit être documentée ici pour assurer la cohérence entre le gameplay, la technique et l'histoire. Le ton de ce projet est **extrêmement sombre, nihiliste et cru**.
 
 ---
 
@@ -31,279 +31,174 @@
 ## 1. VISION NARRATIVE ET PRINCIPES DE CONCEPTION
 
 ### 1.1. Logline du Projet
-> *« Dans un monde où les dieux se sont tus, les hommes ont bâti des empires sur leurs cendres. Mais les cendres ne refroidissent jamais vraiment. »*
+> *« L'histoire est racontée comme un cauchemar réaliste et interactif où un jeu vidéo est devenu une prison mortelle et un enfer médiéval. L'espoir est une illusion. »*
 
-### 1.2. Philosophie de Narration (« Iceberg Storytelling »)
-Aethon Chronicles rejette l'exposition massive (info-dumping). L'histoire est incrustée dans l'environnement et le gameplay.
-- **10% de Visibilité (Prototype) :** Le joueur est confronté aux symptômes — un village isolé, une forêt gangrenée, une faune agressive.
-- **90% Sous la Surface (Horizon) :** Chaque symptôme est la conséquence d'une mythologie systémique, encodée dans la base de données du monde.
-- **Règle d'Or :** Les PNJ ne sont pas des encyclopédies. Ils ont des connaissances limitées, des biais, des peurs, et mentent parfois par omission.
+### 1.2. Philosophie de Narration (Ton & Atmosphère)
+Le ton principal est **nihiliste, cru, oppressant et désespéré**. C’est un mélange viscéral entre la vulnérabilité extrême, la brutalité obsessionnelle, la solitude existentielle et l’ascension sombre.
+- **Point de Vue (POV) :** Troisième personne limitée, strictement collée à **Elara Voss**.
+- **Narration Technique :** Utilisation occasionnelle de mécaniques de jeu (ex. : *« Niveau 7 atteint. Compétence [Résistance à la Douleur] débloquée. »*) pour rappeler la nature VRMMO du monde. Ces notifications deviennent de plus en plus froides et ironiques.
 
 ---
 
 ## 2. COSMOGONIE ET CHRONOLOGIE UNIVERSELLE
 
-### 2.1. L'Âge des Aethons (Ère I — Le Temps Mythique)
-Les **Aethons** étaient des architectes de la réalité, façonnant le monde par la manipulation d'une matrice primordiale nommée le **Filament**. Ils scellèrent leurs protocoles de création dans des terminaux physiques appelés **Nexolithes**.
+### 2.1. L'Origine
+Au commencement existait uniquement **le Vide Éternel**, dont naquirent trois entités :
+1. **Justice (Le Dieu Mort) :** Créateur des lois physiques, aujourd'hui disparu ou endormi.
+2. **The Crimson Mother :** Déesse de la fertilité corrompue, de la chair et de la folie. Mère des abominations et des Goblinoïds.
+3. **The Architect :** Force abstraite de l'ordre, responsable du cadre du VRMMO *Eternal Realms*.
 
-L'entité connue sous le nom de **Varek le Délieur** chercha à interagir avec le vide extérieur à la matrice (le Néant). Cette brèche introduisit **La Tache** (ou *Gangrène du Filament*), une corruption entropique. Les Aethons disparurent lors d'un événement cataclysmique visant à sceller la brèche, laissant leurs infrastructures à l'abandon.
+### 2.2. Le Grand Accident Cosmique (La Fusion)
+Il y a environ 600 ans (in-game), la Crimson Mother tenta de créer un enfant transcendant, ce qui échoua et créa une faille. Cette faille permit à **Eternal Realms** (créé en 2138 dans le monde réel) de fusionner avec cet univers. Ainsi naquit le **Brouillard Noir (Black Mist)**, à la fois chair avortée divine et bug ultime du système.
 
-### 2.2. L'Âge des Royaumes (Ère II — -3000 à -200 ans)
-Émergence des civilisations mortelles (Humains, Sylvarins, Koraths) sur les ruines Aethons. Les Nexolithes furent considérées comme des artefacts magiques ou divins, provoquant l'ascension et la chute d'empires. La Tache, contenue, glissa dans le domaine du mythe et de la superstition religieuse.
-
-### 2.3. L'Âge du Silence (Ère III — -200 ans à Aujourd'hui)
-Une rupture systémique inconnue a fracturé le sceau originel. La Tache fuit lentement dans la topographie. La faune mute, la nécromancie spontanée apparaît, et les Nexolithes entrent en résonance. Les métropoles nient l'évidence pour préserver l'économie, abandonnant les périphéries sauvages à leur sort.
+### 2.3. Chronologie Récente
+- **Dernier jour des serveurs (2138) :** Fusion définitive. Les joueurs piégés (dont Elara) deviennent des "Élus" avec des capacités RPG. Kazuki devient le Lich Overlord.
+- **Début 1772 :** Elara se réveille, niveau 1, dans les ruines de Syphralis. Le Brouillard Noir s'étend inexorablement vers Velnor.
 
 ---
 
 ## 3. TOPOGRAPHIE ET LEVEL DESIGN NARRATIF
 
-La progression géographique suit la progression de la corruption.
+L’île de **Velnora** est une grande île (180x90 km) ressemblant à une main brisée. Le Level Design suit une progression de MMORPG organique, mais chaque avancée exige un coût narratif lourd.
 
-| Phase de Dév. | Identifiant de Zone | Niveau de Menace | Rôle Narratif |
-| :--- | :--- | :---: | :--- |
-| **Pré-Alpha** | Zone 00 : Village de Cendrecroix | Faible | Zone refuge (Hub), exposition initiale |
-| **Pré-Alpha** | Zone 01 : Forêt de Varek | Moyen | Première zone de combat, introduction à la Tache |
-| **Alpha** | Zone 02 : Ruines du Nexe de Sel | Élevé | Donjon d'exposition (Mécanique des Nexolithes) |
-| **Alpha** | Zone 03 : Marécages de l'Oubli | Élevé | Zone de transition, factions cultistes |
-| **Bêta** | Zone 04 : Cité de Port-Ardente | Hub Majeur | Géopolitique, Guilde des Marchands, corruption interne |
-| **Bêta** | Zone 05 : Les Mines Profondes | Très Élevé | Tache concentrée, lore industriel |
-| **Release 1.0** | Zone 06 : Plateau des Cendres | Extrême | Front final avant le centre de résonance |
-| **Release 1.0** | Zone 07 : Citadelle du Délieur | Épique | Raid final (Varek) |
-
-### 3.1. Zone 00 : Village de Cendrecroix (Hub Pré-Alpha)
-- **Concept Visuel (Rétro PS2) :** Polygones anguleux, textures de bois granuleux, brouillard de distance proche, éclairage ambré statique évoquant un crépuscule éternel.
-- **Lore Environnemental :** Construit sur les fondations d'un dôme Aethon calciné. Des fragments de roche noire luisante sont parfois visibles sous les pavés usés.
-- **Fonction Level Design :** Zone sûre (Safe Zone). Aucun aggro ennemi. Présence des services vitaux (Quêtes, Vendeur, Respawn).
-
-### 3.2. Zone 01 : Forêt de Varek (Zone de Combat Pré-Alpha)
-- **Concept Visuel :** Arbres tortueux, canopée dense bloquant la lumière (éclairage zénithal filtré verdâtre). Spores noires (particules 2D) flottant dans l'air. Sols tachés de noir au fur et à mesure que le joueur s'enfonce vers le centre.
-- **Lore Environnemental :** Épicentre local d'une fuite du Filament. La flore et la faune perdent leur identité structurelle.
-- **Fonction Level Design :** Points d'étranglement (choke points) naturels via des racines géantes. Le centre abrite une arène naturelle (clairière de la Nexolithe).
+| Zone | Niveau | Danger | Rôle Narratif / Monstres |
+| :--- | :--- | :--- | :--- |
+| **Velnor (Slums & Docks)** | 1–10 | Faible/Moyen | Survie urbaine, prostitution, vols. *Rats, bandits, goblins isolés.* |
+| **Plaines & Marais** | 8–18 | Moyen | Premiers combats & traumatismes. *Meutes de goblins, loups mutants.* |
+| **Forêt des Murmures** | 15–30 | Élevé | Arc d'extermination. Nids de goblins. *Goblinoïds, araignées.* |
+| **Syphralis Ruines** | 35–55 | Extrême | Point zéro du Brouillard. Climax lovecraftien. *Abominations.* |
+| **Sanctuaire des Ossements**| 40+ | Variable | Forteresse de l'Overlord. Choix moraux, politique. *Non-morts.* |
 
 ---
 
 ## 4. ÉCOSYSTÈME FACTIONNEL
 
-L'écosystème politique et spirituel dicte l'équilibrage du monde.
+### 4.1. Factions Humaines (Fragiles)
+- **Le Conseil de Velnor :** Gouvernement corrompu (Lord Regent Harlan Voss). Voit les réfugiés comme de la chair à canon.
+- **La Guilde des Mercenaires (Iron Shields) :** Dirigée par Rhea "Iron Bitch" Vossler. Protège contre récompense.
+- **Les Cultistes de la Crimson Mother :** Vénèrent le Brouillard et cherchent à le répandre.
 
-1. **Gardiens du Filament :** Vestiges d'un ordre savant. Dépositaires du savoir Aethon. Actuellement décimés, considérés comme des fanatiques ou des mendiants. (Alignement : Neutre/Restaurateur).
-2. **Guilde des Marchands Libres :** Cartel économique régissant les échanges inter-cités. Ils favorisent le statu quo et ignorent volontairement la montée de la Tache si elle n'impacte pas les routes commerciales. (Alignement : Pragmatique).
-3. **Le Conseil des Trois Cités :** Autorité gouvernementale. Bureaucratique, lente, dans un profond déni du danger systémique. (Alignement : Conservateur).
-4. **Les Murmureurs :** Secte apocalyptique vénérant la Tache comme évolution naturelle. Ils accélèrent la corruption des Nexolithes. (Alignement : Antagoniste).
-5. **Les Corrompus :** Entités biologiques dont le code génétique a été altéré par la Tache. Sans réelle volonté politique, mus par l'instinct pur. (Alignement : Menace environnementale).
+### 4.2. Factions Monstrueuses (Dominantes)
+- **La Horde des Goblinoïds :** L'ennemi principal. Dirigée par Grukk le Briseur. Très prolifiques, utilisent le viol pour se reproduire massivement.
+- **Les Deep Ones :** Créatures aquatiques voulant reprendre l'île.
+- **Abominations du Brouillard :** Mutations directes de la Crimson Mother.
+
+### 4.3. Factions Transcendantes
+- **Sanctuaire des Ossements :** L'empire de Kazuki (Overlord). La force la plus organisée.
+- **La Voix de la Fortune :** Entité neutre prophétisant le malheur.
 
 ---
 
 ## 5. PROFILS DES PERSONNAGES NON-JOUEURS (PNJ)
 
-Les PNJ sont conçus pour supporter des arbres de dialogue scriptés (Prototype) et des agents conversationnels LLM (Horizon 2030).
-
-### 5.1. PNJ-01 : Maren Asheld (Veuve et Chef du Village)
-- **Archétype :** Donneur de Quête Principal.
-- **Design Visuel :** Traits durs, regard las, tablier de laine. Animation d'attente (Idle) : s'essuie nerveusement les mains.
-- **Motivation Principale :** Assurer la survie du village à tout prix.
-- **Faille / Secret :** Elle sait que son mari disparu est devenu une créature de la Tache, mais a caché l'information pour éviter la panique (et la honte).
-- **Intégration LLM (Variables d'état) :**
-  ```json
-  {
-    "id": "npc_maren_01",
-    "core_traits": ["pragmatique", "protectrice", "culpabilité_refoulée"],
-    "knowledge_base": ["cendrecroix_history", "husband_fate", "basic_corruption"],
-    "behavioral_rules": [
-      "Never admit fear openly.",
-      "Deflect questions about the husband until quest_01_complete == true.",
-      "Focus on practical survival."
-    ]
-  }
-  ```
-
-### 5.2. PNJ-02 : Aldric Sorel (Marchand Itinérant)
-- **Archétype :** Vendeur de consommables / Source de rumeurs.
-- **Design Visuel :** Corpulent, manteau usé, assis sur un chariot à la roue volontairement non réparée.
-- **Motivation Principale :** Sécurité personnelle et profit.
-- **Faille / Secret :** Il possède un colis scellé illégal à destination de Port-Ardente, contenant un fragment corrompu. Il simule la panne de son chariot par terreur de traverser la Forêt.
-- **Intégration LLM (Variables d'état) :**
-  ```json
-  {
-    "id": "npc_aldric_01",
-    "core_traits": ["loquace", "lâche", "opportuniste"],
-    "knowledge_base": ["trade_routes", "port_ardente_politics", "merchant_guild_secrets"],
-    "behavioral_rules": [
-      "Talk too much to cover up nervousness.",
-      "Downplay the threat of the forest.",
-      "Deny the existence of the sealed package if asked."
-    ]
-  }
-  ```
-
-### 5.3. PNJ-03 : Torvyn l'Ancien (Ermite Aveugle)
-- **Archétype :** Distributeur de Lore (Exposition diégétique) / Gardien déchu.
-- **Design Visuel :** Mendiant en haillons, yeux blancs laiteux. Positionné à l'orée de la zone de danger.
-- **Motivation Principale :** Transmettre le savoir avant la chute inévitable.
-- **Faille / Secret :** A perdu la vue physique en manipulant une Nexolithe, mais a gagné une perception du réseau de Filament.
-- **Intégration LLM (Variables d'état) :**
-  ```json
-  {
-    "id": "npc_torvyn_01",
-    "core_traits": ["cryptique", "résigné", "omniscient_mais_fragmenté"],
-    "knowledge_base": ["aethon_lore", "the_stain_mechanics", "filament_network"],
-    "behavioral_rules": [
-      "Speak in metaphors related to threads, weaving, and light.",
-      "Do not show surprise.",
-      "Offer warnings, not commands."
-    ]
-  }
-  ```
+- **Elara Voss (Protagoniste) :** Joueuse coincée dans son avatar niveau 1. Passe de victime terrifiée à chasseresse froide.
+- **Kazuki / Ainzuloth :** Ancien joueur japonais devenu Lich Overlord. Intelligent, manipulateur, roi du Sanctuaire des Ossements.
+- **La Voix de la Fortune :** Narratrice cynique, oracle.
+- **Captain Edward :** Capitaine pragmatique du seul navire pouvant quitter l'île. Demande 25 pièces d'or.
+- **Cocona Vale :** Réfugiée innocente, amie d'Elara (haut risque de mort/capture).
 
 ---
 
 ## 6. BESTIAIRE : ANATOMIE DE LA CORRUPTION
 
-La Tache ne crée pas la vie, elle la parasite et la redéfinit.
+### 6.1. Goblinoïds (La Menace Principale)
+- **Goblin (Lvl 3-12) :** Lâches en solo, destructeurs en meute. Obsédés par la reproduction. Attaquent en priorité les femmes.
+- **Hobgoblin (Lvl 12-25) :** Plus grands, brutaux, chefs de meute.
+- **Orc (Lvl 18-35) :** Massifs, extrêmement violents, forte libido. Engendrent des demi-orcs.
 
-### 6.1. Mob 01 : Rôdeur des Sous-Bois (Loup Corrompu)
-- **Niveau d'Épuration :** Bas (Trash mob).
-- **Physiologie :** Canidé dont le système pileux est remplacé par des filaments noirs. Un œil hypertrophié et décoloré.
-- **Schéma de Comportement (IA basique) :** Patrouille locale (radius 5m). Aggro à vue (FOV 120°, 8m).
-- **Mécanique de Combat :** Attaque en mêlée (DPS faible/moyen). Attaque spéciale : *Hurlement Entropique* (Immobilisation 1.5s, cooldown 12s).
-- **Drop Table :** Griffe noircie (60%), Fourrure ternie (40%), Or (2-4).
+### 6.2. Abominations (Créatures du Brouillard)
+- **Corrompu / Mist Walker (Lvl 10-30) :** Mutants infectant par contact ou morsure.
+- **Fleshspawn (Lvl 25-50) :** Amas de chair cherchant à féconder ou être fécondés.
 
-### 6.2. Mob 02 : L'Effaré (Humanoïde Corrompu)
-- **Niveau d'Épuration :** Moyen.
-- **Physiologie :** Ancien bûcheron ou voyageur. Posture asymétrique, spasmes musculaires (signe d'une structure neurologique en conflit avec le parasite).
-- **Schéma de Comportement :** Immobile ou errance aléatoire. Aggro de proximité sonore (rayon 6m).
-- **Mécanique de Combat :** Coups lourds lents (Fort DPS physique, esquivable). Attaque spéciale : *Aura de Vide* (-30% de régénération de santé du joueur dans un rayon de 4m).
-- **Drop Table :** Tissu corrompu (55%), Éclat de Tache (15%), Or (5-10).
-
-### 6.3. Mini-Boss 01 : La Mère-Arbre
-- **Niveau d'Épuration :** Élevé (Élite de zone).
-- **Physiologie :** Fusion d'un chêne tricentenaire et d'un noyau de Tache pur. Les racines agissent comme des tentacules.
-- **Schéma de Comportement :** Ancré au sol (immobile). Gère des zones d'effet (AoE).
-- **Mécanique de Combat :**
-  - Attaque basique : *Frappe de Racine* (renversement, cible unique).
-  - Compétence de zone : *Nuage de Spores* (DoT constant si le joueur est à moins de 3m).
-  - Phase Enragée (HP < 30%) : Vitesse d'attaque augmentée de 50%.
-- **Drop Table :** Cœur-Tache (Objet de quête - 100%), Résine Corrompue (70%), Or (20-30).
+### 6.3. Autres
+- **Deep Ones (Fishmen) :** Intelligents, peuvent s'hybrider avec les humains.
+- **Death Knight (Lvl 40-60) :** Élites de l'Overlord Kazuki.
 
 ---
 
 ## 7. ARCHITECTURE DES QUÊTES
 
-Les quêtes sont implémentées via un système d'états (State Machine) avec des déclencheurs booléens clairs.
+Les quêtes utilisent toujours la machine d'état du serveur (State Machine), mais avec des embranchements narratifs sombres.
 
-### 7.1. Quête Principale : Q_MAIN_01 — « Les Cicatrices du Bois » (Prototype)
-
-**Contexte :** Le joueur doit purger la lisière de la forêt pour prouver sa valeur à Maren.
-**Conditions de déclenchement :** Arrivée du joueur à Cendrecroix.
+### 7.1. Quête Principale : Q_MAIN_SURVIVAL — « Le Prix du Sang »
+**Contexte :** Elara doit amasser de l'or dans les Slums pour survivre, ce qui mène à son premier traumatisme.
 
 | Étape (State) | Objectif UI | Déclencheurs / Scripts (Conditions) |
 | :--- | :--- | :--- |
-| **0_Init** | *Parlez à Maren près de la fontaine.* | Dialogue `MAREN_01` validé. -> State = 1 |
-| **1_Hunt** | *Abattez les Corrompus dans la Forêt de Varek (0/3).* | `kill_count_corrupted` >= 3. -> State = 2 |
-| **2_Investigate** | *Cherchez la source de la corruption au centre de la forêt.* | Trigger box dans la Clairière du Nexe touchée. -> State = 3 |
-| **3_Interact** | *Examinez l'artefact noirci.* | Interaction avec `obj_nexolithe`. Lancement de la *Cutscene 01*. Set `flag_husband_seen = true`. -> State = 4 |
-| **4_Report** | *Retournez faire votre rapport à Maren.* | Dialogue `MAREN_02` validé. Checking `flag_husband_seen`. -> State = 5 (Complete) |
-
-**Récompenses de Complétion :**
-- Base : 150 XP, 25 Or, 3x Bandages de fortune.
-- Bonus (Si `flag_husband_seen` est True) : +50 XP, Objet Lore "Fragment de Souvenir".
-
-### 7.2. Pipeline de Quêtes Secondaires (Phase Alpha)
-
-- **Q_SIDE_01 — « La Roue Cassée » (Aldric) :** Fedex (Collecte). Récupérer 5 "Débris Métalliques" en forêt (taux de drop : 30% sur Effarés). *Twist narratif : Ce ne sont pas des débris de chariot, mais des fragments d'armure Aethon.*
-- **Q_SIDE_02 — « Fréquence Entropique » (Torvyn) :** Collecte Ciblée. Ramener de la Résine de Mère-Arbre. Débloque un passif de résistance mineure à la Tache.
+| **0_Init** | *Trouvez un moyen de gagner de l'or.* | Arrivée dans les Slums de Velnor. -> State = 1 |
+| **1_Job** | *Effectuez des tâches pour Big Mama.* | `gold_earned` >= 5. -> State = 2 |
+| **2_Ambush** | *Livrez le paquet dans la ruelle sombre.* | Trigger box ruelle touchée. Spawn de 3 Goblins. -> State = 3 |
+| **3_Trauma** | *Survivez (ou subissez).* | Si HP tombe à 0 : Lancement *Cutscene_Trauma_01*. Set `trauma_level += 1`. -> State = 4 |
+| **4_WakeUp** | *Relevez-vous.* | Interaction avec l'environnement. Débloque *Rage Froide*. -> State = 5 (Complete) |
 
 ---
 
 ## 8. INGÉNIERIE DES DIALOGUES ET SCRIPTING
 
-### 8.1. Standards de Rédaction (Format PS2)
-- **Contrainte UI :** Max 3 lignes par bulle de dialogue, max 60 caractères par ligne.
-- **Absence de voix (Voice-over) :** Le sous-texte doit passer par la ponctuation et les animations d'attente.
-- **Style :** Phrases courtes. Langage utilitaire. L'héroïsme est remplacé par le pragmatisme et la survie.
+### 8.1. Standards de Rédaction (Format PS2 revisité)
+- **Contrainte UI :** Max 3 lignes par bulle.
+- **Style :** Cru, direct. Pas de métaphores héroïques. Les notifications RPG (système) sont affichées comme des dialogues glacials.
 
-### 8.2. Script : Scène de Résolution (Q_MAIN_01, État 4)
-
-**Condition A : Le joueur a exploré la Nexolithe (`flag_husband_seen == true`)**
-> **JOUEUR :** "La forêt est purgée. Mais j'ai trouvé une pierre qui battait comme un cœur."
-> **MAREN :** [Se fige. L'animation d'idle s'arrête.]
-> **JOUEUR :** "Elle a projeté l'image d'un homme. Il disait votre nom."
-> **MAREN :** "Il était... comment ?"
-> **JOUEUR :** "Infecté. Mais il luttait."
-> **MAREN :** "Je le savais. Pardonne-moi de t'avoir envoyé dans cette horreur sans te dire la vérité."
-> **MAREN :** "Prends ceci. Et si tu le revois un jour... abrège ses souffrances."
-
-**Condition B : Le joueur a ignoré l'exploration (`flag_husband_seen == false`)**
-> **JOUEUR :** "Les créatures sont mortes. La lisière est sûre."
-> **MAREN :** [Soupire. L'animation d'idle continue.]
-> **MAREN :** "Pour un temps, au moins. Tu as du cran. Prends ta récompense."
-> **MAREN :** "Tu n'as rien vu de... particulier au cœur des bois ?"
-> **JOUEUR :** "Seulement des monstres."
-> **MAREN :** "... C'est sans doute mieux ainsi."
+### 8.2. Script : Scène de Rencontre (Kazuki & Elara)
+**Condition : Elara entre dans la salle du trône du Sanctuaire.**
+> **KAZUKI :** "Une survivante. Niveau 34. Ta progression est... statistiquement improbable."
+> **ELARA :** [Reste silencieuse. Main sur son arme.]
+> **KAZUKI :** "Baisse cette dague. Si je voulais ta mort, le système l'aurait déjà actée."
+> **SYSTEM_UI :** *[Alerte : Différence de niveau mortelle. Fuite recommandée.]*
+> **KAZUKI :** "Tu massacres les goblins avec une efficacité pathologique. Sers-moi, et je t'offrirai leur extinction."
 
 ---
 
 ## 9. SYSTÈMES D'ÉVÉNEMENTS DYNAMIQUES
 
-Des systèmes serveurs génèrent de l'incertitude dans l'open world.
+### 9.1. Raid Goblin (Événement Fréquent)
+- **Condition :** Cycle nuit, dans Velnor Slums ou Plaines.
+- **Action :** Spawn de 15 à 40 Goblins.
+- **Mécanique :** Les PNJ peuvent mourir définitivement ou être enlevés. Augmente le compteur de terreur de la ville.
 
-### 9.1. Assaut Nocturne (World Event Mineur)
-- **Condition de déclenchement :** Cycle nuit (Serveur) & Population Zone 00 > 1.
-- **Action :** Apparition de 3 points de spawn temporaires à la bordure Zone 00 / Zone 01.
-- **Mécanique :** Les joueurs doivent empêcher 5 Rôdeurs d'atteindre le centre du village. Si succès : buff de zone (XP +5% pendant 1h).
-
-### 9.2. Le Miasme de Varek (World Event Moyen - Bêta)
-- **Condition de déclenchement :** Timer aléatoire (entre 4h et 8h d'intervalle).
-- **Action :** Brouillard noir dense sur la Forêt de Varek. Portée de vue réduite de 70%.
-- **Mécanique :** Les statistiques des créatures corrompues augmentent de +30%. Les chances de loot rare sont doublées.
+### 9.2. Avancée du Brouillard Noir (Horloge Narrative)
+- **Condition :** Basé sur le temps de jeu serveur (ex: chaque mois in-game).
+- **Mécanique :** Le brouillard avance de 500m. Les stats des ennemis dans cette zone sont buffées. Les quêtes non terminées dans la zone engloutie échouent définitivement.
 
 ---
 
 ## 10. DIRECTION CINÉMATOGRAPHIQUE
 
-Les cinématiques sont rendues in-engine, avec des angles de caméra fixes (à la Resident Evil classique ou Metin2) pour souligner la nostalgie et alléger le réseau.
+Caméras fixes et angles oppressants pour accentuer la vulnérabilité, respectant les contraintes PS2.
 
-**Cutscene 01 : Contact avec le Filament (Quête Principale)**
-- `CAMERA_01` : Gros plan sur la Nexolithe noire incrustée dans l'écorce.
-- `AUDIO` : Battement de cœur basses fréquences, volume croissant.
-- `ACTION` : Le personnage avance la main (Animation scriptée).
-- `VFX` : Flash blanc saturant l'écran (Overbloom).
-- `CAMERA_02` : Plan flou, filtre statique/VHS. Silhouette humanoïde vacillante dans l'obscurité.
-- `TEXTE OVERLAY` : *"Maren... le fil... se rompt..."*
-- `ACTION` : Retour immédiat au jeu normal (Gameplay Camera). Un debuff inoffensif "Désorientation" s'applique pendant 3 secondes.
+**Cutscene : La Diseuse de Bonne Aventure**
+- `CAMERA_01` : Plan en contre-plongée sur Elara marchant dans la boue.
+- `AUDIO` : Bruits de pluie et respiration lourde.
+- `VFX` : Apparition progressive de brume aux pieds.
+- `CAMERA_02` : Gros plan sur le visage de la Diseuse de Bonne Aventure, yeux bandés.
+- `TEXTE OVERLAY` : *"Peu importe tes choix, petite fille... l'île finit toujours par gagner."*
+- `ACTION` : Disparition en un cut (fade to black rapide).
 
 ---
 
 ## 11. SPÉCIFICATIONS TECHNIQUES IA (HORIZON 2030)
 
-Pour assurer la transition d'un jeu classique vers un écosystème dirigé par l'IA (via MCP), le backend (Rust/Bevy) doit structurer l'environnement sémantique dès le prototype.
+Le backend Rust/Bevy utilise le MCP (Model Context Protocol) pour donner vie au monde oppressant.
 
-### 11.1. Architecture RAG (Retrieval-Augmented Generation) pour PNJ
-Les données narratives sont injectées en tant que "Souvenirs" dans une base vectorielle (ex: Qdrant/Milvus).
-
-**Pipeline d'exécution :**
-1. **Événement Client :** Le joueur interagit avec Maren.
-2. **Requête Serveur :** Envoi du contexte (Statut des quêtes, inventaire, réputation).
-3. **Recherche Vectorielle (Retrieval) :** Requête vers la DB vectorielle : *"Quels sont les souvenirs de Maren concernant ce joueur et la quête de la forêt ?"*
-4. **Prompting (Generation) :** Le LLM génère une ligne de dialogue dynamique via l'API.
-5. **Validation :** Le serveur valide la cohérence de la réponse (Contraintes : Pas de hors-sujet, max 60 caractères) avant envoi au client.
-
-### 11.2. Modèle de Contrat MCP (Extrait JSON pour intégration LLM)
+### 11.1. Modèle de Contrat MCP pour l'Overlord (Exemple Kazuki)
 ```json
 {
-  "agent_id": "maren_asheld",
-  "system_directive": "Act as Maren, a grim village leader in a dark medieval setting. Do not break character. Keep responses under 150 characters total.",
+  "agent_id": "kazuki_overlord",
+  "system_directive": "Act as Kazuki (Ainzuloth), a 400-year-old Lich Overlord who used to be a Japanese gamer. You are extremely intelligent, politely cold, and view the world through RPG mechanics and statistics. Do not show empathy.",
   "dynamic_context": {
-    "world_state": "night_time, forest_corrupted",
-    "player_relationship_score": 15,
-    "last_player_action": "completed_quest_01_killed_corrupted_husband"
+    "world_state": "mist_advancing, goblin_horde_active",
+    "player_stats": {
+      "level": 34,
+      "corruption_level": 45,
+      "trauma_level": 80
+    },
+    "last_player_action": "massacred_goblin_nest_03"
   },
   "retrieved_memories": [
-    "The player discovered my husband's fate.",
-    "I gave the player my husband's ring."
+    "The player refused my first offer of alliance.",
+    "The player uses poison and fire extensively against goblins."
   ],
-  "allowed_actions": ["trade", "give_info", "reject_conversation"]
+  "allowed_actions": ["offer_pact", "cast_intimidation", "reveal_lore"]
 }
 ```
 
@@ -311,13 +206,11 @@ Les données narratives sont injectées en tant que "Souvenirs" dans une base ve
 
 ## 12. GLOSSAIRE TECHNIQUE ET NARRATIF
 
-- **Aethons :** Entités fondatrices (lore). Disparues.
-- **Corrompus (Corrupted) :** Mob standard affecté par la Tache.
-- **Filament :** Le code/matrice magique constituant l'univers.
-- **La Tache (The Stain) :** Virus ontologique détruisant le Filament. Ennemis et boss.
-- **MCP (Model Context Protocol) :** Technologie d'interface standardisée permettant aux IA de lire l'état du serveur et de dicter des actions en jeu.
-- **Nexolithe :** Monolithe de stockage Aethon. Agit comme des "bornes wifi" magiques, souvent corrompues.
-- **Varek le Délieur :** Le grand antagoniste historique. Responsable de la brèche originelle.
+- **Brouillard Noir (Black Mist) :** La corruption vivante issue de la fusion du jeu et de la Crimson Mother.
+- **Élus (Players) :** Humains du monde réel coincés dans le jeu (Elara, Kazuki).
+- **MCP :** Model Context Protocol, utilisé pour dynamiser les IA (comme Kazuki ou la Diseuse).
+- **Rebirth :** Mécanique de mort où une joueuse enceinte renaît avec les traits de la race du père de l'enfant.
+- **Sanctuaire des Ossements :** Capitale de l'Overlord au centre de l'île.
 
 ---
-*Fin du Document LORE.md — Validation technique requise par l'équipe Backend (Rust) et Game Design.*
+*Fin du Document LORE.md — Validation technique requise par l'équipe Backend et Game Design.*
