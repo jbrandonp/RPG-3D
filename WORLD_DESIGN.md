@@ -42,13 +42,13 @@ La carte n'est pas chargée intégralement.
 
 ## 3. Topologie des Zones et Landmarks
 
-### 3.1 Zone 1 : Le Hameau des Cendres (Hub Central / Safe Zone)
+### 3.1 Zone 1 : Le Village de Cendrecroix (Hub Central / Safe Zone)
 - **Taille :** `128x128u` (4 Chunks).
 - **Landmark :** Le "Grand Bûcher" (émetteur de particules et source de lumière dynamique visible de loin).
 - **Flow :** Architecture circulaire fermée. Les sorties sont des goulets d'étranglement (Chokepoints) naturels (pont-levis brisé, porte défoncée).
 - **Règles Systémiques :** Dégâts joueurs et ennemis désactivés.
 
-### 3.2 Zone 2 : La Forêt des Écorchés (Zone de Grind Initiale)
+### 3.2 Zone 2 : La Forêt de Varek (Zone de Grind Initiale)
 - **Taille :** `256x256u` (16 Chunks).
 - **Landmark :** L'Arbre des Pendus (au centre nord, repère d'orientation sans ouvrir de carte).
 - **Flow :** Des routes sûres (`SpeedModifier x1.0`) et des bois denses remplis de "Ronces Corrompues" (`SpeedModifier x0.6`). Les joueurs sont incités à rester sur la route à bas niveau.

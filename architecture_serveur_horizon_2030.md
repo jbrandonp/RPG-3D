@@ -101,7 +101,7 @@ pub enum ServerResponse {
     /// Notification d'événement irréversible
     CombatResolution { attacker: u64, victim: u64, effect: u32, value: i32 },
     /// Validation d'un état critique (ex: Inventaire)
-    InventoryMutation { slot_id: u16, item_id: u32, amount: u32 },
+    InventoryMutation { slot_id: u16, item_id: uuid::Uuid, amount: u32 },
 }
 ```
 
@@ -193,10 +193,10 @@ async fn execute_trade_transaction(
     // 3. Validation des pré-requis (fonds suffisants, objet possédé et non lié)
 
     // 4. Mutations
-    sqlx::query("UPDATE characters SET gold = gold - $1 WHERE id = $2 AND gold >= $1")
+    sqlx::query("UPDATE characters SET currency_copper = currency_copper - $1 WHERE id = $2 AND currency_copper >= $1")
         .bind(price).bind(buyer_id).execute(&mut tx).await?;
 
-    sqlx::query("UPDATE characters SET gold = gold + $1 WHERE id = $2")
+    sqlx::query("UPDATE characters SET currency_copper = currency_copper + $1 WHERE id = $2")
         .bind(price).bind(seller_id).execute(&mut tx).await?;
 
     sqlx::query("UPDATE inventory_items SET owner_id = $1 WHERE id = $2")
