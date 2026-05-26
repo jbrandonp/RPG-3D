@@ -1,0 +1,25 @@
+-- Table characters (personnages)
+CREATE TABLE characters (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id     UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name        VARCHAR(50) UNIQUE NOT NULL,
+    level       SMALLINT DEFAULT 1,
+    experience  BIGINT DEFAULT 0,
+    str_stat    SMALLINT DEFAULT 5,
+    dex_stat    SMALLINT DEFAULT 5,
+    int_stat    SMALLINT DEFAULT 5,
+    vit_stat    SMALLINT DEFAULT 5,
+    current_hp  INT,
+    max_hp      INT,
+    current_mana INT,
+    max_mana    INT,
+    zone_id     VARCHAR(50) DEFAULT 'velnor_slums',
+    pos_x       FLOAT DEFAULT 0.0,
+    pos_y       FLOAT DEFAULT 0.0,
+    pos_z       FLOAT DEFAULT 0.0,
+    gold        BIGINT DEFAULT 0,
+    trauma_index FLOAT DEFAULT 0.0,
+    corruption_index FLOAT DEFAULT 0.0,
+    created_at  TIMESTAMPTZ DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ DEFAULT NOW()
+);
