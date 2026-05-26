@@ -140,3 +140,57 @@ def calculer_xp_totale(niveau_max):
 
 calculer_xp_totale(100)
 ```
+
+## 8. Plan d'Action et Sprints (Roadmap sur 6 mois)
+
+L'objectif de cette feuille de route est d'implémenter l'ensemble des systèmes de Game Design décrits précédemment dans l'architecture Rust/Bevy ECS, de manière itérative sur 6 mois.
+
+### Mois 1 : Fondations des Simulateurs et Courbe de Progression
+* **Sprint 1 : Outils de Simulation en Rust**
+  * Traduire les scripts Python (Calcul des dégâts, Courbe d'XP) en modules de simulation Rust (CLI et tests unitaires) pour aider les Game Designers.
+  * Créer les structures de données de base pour la configuration de la progression (base, exposant).
+* **Sprint 2 : Implémentation de la Progression (ECS)**
+  * Développer le composant `Level` et `Experience`.
+  * Créer le système Bevy gérant le gain d'XP et le passage de niveau (Level Up) jusqu'au niveau 100.
+  * Implémenter des tests d'intégration simulant l'XP gagnée de 1 à 100.
+
+### Mois 2 : Système de Statistiques et de Compétences (Classless)
+* **Sprint 3 : Statistiques Principales**
+  * Créer le composant `Attributes` (FOR, DEX, INT, CON).
+  * Implémenter le système de distribution des points de statistiques à chaque passage de niveau.
+  * Lier les attributs aux sous-statistiques (PV max, endurance, mana, capacité de port).
+* **Sprint 4 : Arbre de Compétences et Pré-requis**
+  * Définir le format de données (ex: RON/JSON) pour l'arbre des compétences.
+  * Implémenter la logique d'apprentissage des compétences avec vérification des pré-requis de statistiques.
+
+### Mois 3 : Résolution du Combat et Formules WGPU/Bevy
+* **Sprint 5 : Dégâts et Armures**
+  * Implémenter les composants de combat (`Health`, `Armor`, `WeaponStats`).
+  * Créer le `CombatSystem` Bevy utilisant les formules de rendements décroissants pour l'armure.
+* **Sprint 6 : Modificateurs et Résolution Avancée**
+  * Gérer les coups critiques, l'esquive, et les modificateurs de compétences.
+  * Lier les statistiques (DEX, FOR, INT) directement au calcul final des dégâts dans l'ECS serveur.
+
+### Mois 4 : Fondations de l'Économie et Inventaire
+* **Sprint 7 : Système Monétaire**
+  * Créer le composant `Wallet` (Cuivre, Argent, Or) avec conversion automatique.
+  * Implémenter un gestionnaire d'inventaire rudimentaire (poids, emplacements limités par la Force).
+* **Sprint 8 : Troc et Valeur Intrinsèque**
+  * Attribuer des valeurs de base aux ressources.
+  * Créer le système d'échange (Trade) entre joueurs et PNJ (validation côté serveur des valeurs équivalentes).
+
+### Mois 5 : Artisanat (Crafting)
+* **Sprint 9 : Métiers et Ressources**
+  * Créer les entités de nœuds de ressources (Minerai, Arbres) et les systèmes de récolte liés aux statistiques.
+  * Implémenter les composants de métiers (Niveau de métier, XP d'artisanat).
+* **Sprint 10 : Boucle de Création et Qualité**
+  * Développer le système de fusion de ressources pour créer un objet.
+  * Introduire l'algorithme probabiliste de réussite et de génération de qualité (Normal, Supérieur, Épique) influencé par la Force ou le niveau du métier.
+
+### Mois 6 : Économie Macro et Équilibrage Global (Gold Sinks)
+* **Sprint 11 : Intégration des Gold Sinks**
+  * Implémenter la durabilité et l'usure de l'équipement (Composant `Durability`).
+  * Créer les systèmes de réparation, taxes de transaction, et coûts de voyage.
+* **Sprint 12 : Tests et Équilibrage**
+  * Utiliser les outils de simulation Rust créés au mois 1 pour faire tourner des batailles et des économies à grande échelle.
+  * Ajustement final des valeurs (XP, taux de drop, coûts de réparation) pour s'assurer que le ratio de l'inflation reste proche de 1.
