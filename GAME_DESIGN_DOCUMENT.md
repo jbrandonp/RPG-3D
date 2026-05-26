@@ -103,3 +103,55 @@ L'univers abandonne les interactions statiques au profit de modèles génératif
 1. **Boucle Court-terme (La Minute) :** Un système de combat action nerveux, exigeant un bon placement et permettant la satisfaction de vaincre des hordes d'ennemis.
 2. **Boucle Moyen-terme (L'Heure) :** Retour en ville, sécurisation de l'inventaire, utilisation du système d'artisanat, et arbitrage commercial pour optimiser ses ressources en surveillant les fluctuations de l'IA.
 3. **Boucle Long-terme (La Semaine/Le Mois) :** Implication sociale, politique et militaire. Sécurisation de monopoles économiques dans les zones PvP, prise de territoires avec la guilde, et maîtrise approfondie des armes et statistiques du personnage.
+
+## 9. Plan d'Action Technique (Macro-Sprint 6 Mois)
+
+Ce plan d'action est conçu pour mettre en place l'infrastructure logicielle et la préparation à l'architecture cloud "Horizon 2030". Il est destiné à être exécuté de manière autonome par l'IA. La priorité est donnée aux fondations techniques robustes plutôt qu'au contenu jouable final.
+
+### Mois 1 : Fondations Client/Serveur et Réseau (WebTransport/QUIC)
+*   **Objectif :** Établir la communication basique et autoritaire entre un client Bevy et un serveur Bevy headless.
+*   **Actions :**
+    *   Initialisation des espaces de travail Rust (crate partagé pour l'ECS, crate client, crate serveur).
+    *   Mise en place du serveur Bevy Headless avec une boucle de simulation à tick-rate fixe.
+    *   Intégration d'un protocole réseau basé sur WebTransport/QUIC (gestion des flux multiplexés fiables et non-fiables).
+    *   Synchronisation rudimentaire d'une entité (ex: déplacement d'un cube) : le client propose une position (prédiction), le serveur valide et corrige (réconciliation).
+
+### Mois 2 : Persistance des Données (PostgreSQL) et Authentification
+*   **Objectif :** Lier le serveur autoritaire à une base de données relationnelle pour garantir la sauvegarde des données vitales.
+*   **Actions :**
+    *   Mise en place d'une instance PostgreSQL en local.
+    *   Création des schémas de données initiaux (comptes, personnages, positions, inventaires basiques).
+    *   Intégration d'un ORM asynchrone (ex: SQLx) dans le serveur Bevy.
+    *   Création d'un service d'authentification simple et séparé (token/session).
+    *   Implémentation des routines de sauvegarde périodique de l'état du monde depuis la mémoire du serveur vers la base de données.
+
+### Mois 3 : Architecture "Client Terminal" et Physique Serveur
+*   **Objectif :** Mettre en place le paradigme où le client n'est qu'un afficheur et le serveur le seul garant des mathématiques du jeu.
+*   **Actions :**
+    *   Configuration du moteur de rendu client pour le style rétro (nearest-neighbor filtering, pas de PBR, matériaux Unlit).
+    *   Implémentation du partitionnement spatial côté serveur (chunking) : le serveur n'envoie au client que les événements des entités dans son champ de vision.
+    *   Intégration d'un moteur physique basique côté serveur uniquement (NavMesh statique, colliders primitifs : sphères, boîtes, capsules).
+    *   Test de validation : Le client ne fait qu'interpoler les positions dictées par le serveur.
+
+### Mois 4 : Socle des Mécaniques Hybrides et Télémétrie
+*   **Objectif :** Intégrer les bases du gameplay action et préparer l'observabilité.
+*   **Actions :**
+    *   Implémentation des attributs de base (STR, DEX, INT, VIT) dans le crate ECS partagé.
+    *   Création du système de compétences de zone (Hitboxes coniques/circulaires) pour le combat de mêlée (Cleave).
+    *   Intégration de la stack d'observabilité de base (OpenTelemetry, Prometheus) pour remonter les métriques de performance du serveur (tick rate, charge CPU).
+
+### Mois 5 : Conteneurisation (Docker) et Architecture Cloud Ready
+*   **Objectif :** Packager l'architecture pour qu'elle puisse tourner de manière isolée et agnostique en préparation au déploiement cloud.
+*   **Actions :**
+    *   Création des `Dockerfile` optimisés (multi-stage builds) pour le serveur de jeu Bevy Headless.
+    *   Création des `Dockerfile` pour le service d'authentification.
+    *   Mise en place d'un environnement `docker-compose` complet (Serveur, Auth, PostgreSQL, Grafana/Prometheus) pour lancer le cluster en local avec une seule commande.
+    *   Sécurisation basique des conteneurs et gestion des variables d'environnement.
+
+### Mois 6 : Orchestration Kubernetes et Agones (Horizon 2030)
+*   **Objectif :** Préparer le déploiement sur cluster pour une scalabilité dynamique des instances de jeu.
+*   **Actions :**
+    *   Définition des manifestes Kubernetes (Déploiements, Services, ConfigMaps, Secrets) pour les services non-stateful (Auth, API).
+    *   Intégration et configuration de Google Agones pour la gestion spécifique du cycle de vie des serveurs de jeu Bevy (GameServer, Fleet, FleetAutoscaler).
+    *   Mise en place d'un point d'entrée réseau (Ingress / Nginx) pour le routage des clients.
+    *   Rédaction de la documentation de déploiement et test simulé de montée en charge pour vérifier le spawn automatique de nouveaux GameServers via Agones.
