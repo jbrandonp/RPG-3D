@@ -1,102 +1,104 @@
-# Plan d'Infrastructure Cloud : Horizon 2030 (AI-Native & Hautes Performances)
+# High-Level Architecture (HLA) : Infrastructure Cloud Horizon 2030 (AI-Native MMO)
 
-Ce document définit la vision d'infrastructure cloud cible (Horizon 2030) pour le MMO. L'architecture est pensée pour être **cloud-agnostique** (pouvant tourner sur AWS, Google Cloud, Azure ou du bare-metal Kubernetes) afin de garantir la souveraineté des données, la flexibilité des coûts et la scalabilité massive requise par l'intégration d'IA.
-
----
-
-## 1. Architecture Cloud Globale et Serveurs
-
-Le système repose sur un cluster orchestré dynamiquement, séparant clairement les services web/API des serveurs de jeu en temps réel.
-
-*   **Orchestration :** **Kubernetes (K8s)**
-    *   Le standard de facto de l'industrie. Permet de déployer, gérer et mettre à l'échelle tous les conteneurs du projet indépendamment du fournisseur Cloud (EKS, GKE, AKS, ou clusters auto-hébergés).
-*   **Orchestration Serveurs de Jeu :** **Agones** (sur Kubernetes)
-    *   Agones (développé par Google et Ubisoft) est l'outil parfait pour gérer les serveurs de jeu stateful en mémoire (Bevy headless en Rust).
-    *   **Fleets & Autoscaling :** Agones gère des flottes de serveurs de jeu, allouant de nouveaux conteneurs Bevy à la volée en fonction de la population en jeu et du matchmaking, et les détruisant quand ils sont vides pour économiser les coûts.
-*   **Communication & Réseau :**
-    *   **Ingress Controller / API Gateway :** Nginx ou Traefik pour gérer le trafic HTTPS (authentification, requêtes API web).
-    *   **Jeu Temps Réel :** Connexions QUIC ou WebTransport directement orientées vers les Game Servers alloués par Agones, minimisant la latence et contournant le head-of-line blocking du TCP.
+Ce document définit l'architecture cible et la stratégie d'infrastructure cloud (Horizon 2030) pour le projet MMORPG. Conçu selon les principes de **Cloud-Agnosticisme**, de **Haute Disponibilité (HA)** et d'**Observabilité Globale**, ce document fait autorité sur les choix techniques régissant l'écosystème serveur, les bases de données, l'intégration de l'intelligence artificielle et la sécurité opérationnelle.
 
 ---
 
-## 2. Bases de Données et Stockage
+## 1. Topologie Réseau et Architecture Multi-Régions
 
-L'architecture de données abandonne le modèle monolithique pour une approche polyglotte, adaptée aux très hauts débits et à l'IA.
+Pour garantir une faible latence aux joueurs du monde entier et une résilience face aux pannes locales, l'infrastructure repose sur une architecture **Multi-Régions Active-Active**.
 
-*   **Données Transactionnelles (Personnages, Inventaires, Monnaie) :** **CockroachDB**
-    *   Type : NewSQL distribué.
-    *   Pourquoi : Garantit l'intégrité transactionnelle stricte (ACID) sans point de défaillance unique (SPOF). Si un nœud tombe, le jeu continue. Parfait pour l'économie critique du jeu.
-*   **Mémoire IA et RAG (Souvenirs des PNJ) :** **Qdrant** ou **Milvus**
-    *   Type : Base de données vectorielle.
-    *   Pourquoi : Permet aux agents IA de requêter le contexte sémantique (via Similarité Cosinus) ultra-rapidement pour générer des réponses pertinentes.
-*   **Logs Analytiques & Télémétrie Massive :** **ClickHouse**
-    *   Type : Base de données orientée colonnes.
-    *   Pourquoi : Conçu pour ingérer des millions d'événements par seconde (déplacements, statistiques de combat). Essentiel pour analyser les tricheurs et équilibrer le jeu.
-*   **Stockage des Assets et Sauvegardes Froids :** **Stockage Objet compatible S3** (ex: MinIO, AWS S3)
+### 1.1. Modèle de Distribution Géographique
+*   **Edge Network & Global Load Balancing :** Utilisation d'un CDN (ex: Cloudflare) et d'un Global Load Balancer (Anycast) pour router le trafic TCP/UDP et HTTPS des joueurs vers la région la plus proche.
+*   **Régions Actives :** Déploiement sur plusieurs grandes plaques géographiques (ex: NA-East, EU-Central, AP-Northeast). Chaque région est autonome pour le traitement du jeu en temps réel.
+*   **Virtual Private Cloud (VPC) & Sous-réseaux :** Chaque région dispose d'un VPC segmenté selon le principe du moindre privilège :
+    *   **Public Subnets :** Load Balancers, API Gateways, Ingress Controllers.
+    *   **Private Subnets (Compute) :** Clusters Kubernetes (microservices) et pools Agones (serveurs de jeu). Pas d'IP publique, accès via NAT Gateway.
+    *   **Private Subnets (Data) :** Clusters de bases de données (CockroachDB, Qdrant). Accès strictement limité aux sous-réseaux Compute.
 
----
-
-## 3. Déploiements (CI/CD)
-
-La philosophie est le **GitOps** : Git est la seule source de vérité pour le code et l'infrastructure.
-
-*   **Intégration Continue (CI) :** **GitHub Actions** ou **GitLab CI**
-    *   Build des binaires Rust (serveur Bevy et client).
-    *   Exécution des tests unitaires, d'intégration, et des linters de sécurité.
-    *   Création des images Docker (distroless pour réduire la surface d'attaque) et poussée vers un Container Registry privé.
-*   **Déploiement Continu (CD) :** **ArgoCD**
-    *   ArgoCD tourne dans Kubernetes, surveille le dépôt Git de configuration, et synchronise automatiquement l'état du cluster avec la configuration déclarée (YAML/Helm).
-    *   Permet le déploiement de type "Blue/Green" ou "Canary" pour mettre à jour les API ou les serveurs de jeu sans interruption pour les joueurs existants.
+### 1.2. Service Mesh et Isolation
+*   **Service Mesh (Istio / Linkerd) :** Déployé sur tous les clusters Kubernetes pour gérer le routage du trafic interne, implémenter le **mTLS (Mutual TLS)** par défaut entre tous les microservices, et fournir des métriques réseau granulaires.
+*   **Network Policies (Calico / Cilium) :** Règles strictes définissant quels pods peuvent communiquer ensemble (ex: isolation totale entre les namespaces du jeu, de l'authentification et de l'analytique).
 
 ---
 
-## 4. Stratégie de Sauvegardes (Backups)
+## 2. Orchestration et Serveurs de Jeu (Compute)
 
-La donnée des joueurs est le cœur du MMO. La stratégie doit être paranoïaque.
+La séparation des préoccupations est stricte entre les services web (stateless) et la simulation de jeu (stateful).
 
-*   **Base Transactionnelle (CockroachDB) :**
-    *   **PITR (Point-in-Time Recovery) :** Activé par défaut. Permet de restaurer la base à la seconde près sur une fenêtre glissante (ex: 7 jours) en cas de corruption logique (ex: un bug duplique des objets).
-    *   **Backups complets quotidiens :** Exportés de manière chiffrée vers un bucket S3.
-*   **Base Vectorielle et Analytique :**
-    *   Snapshots réguliers (toutes les 6 à 12 heures) vers le bucket S3. Si la donnée analytique d'une heure est perdue, c'est moins grave qu'un inventaire joueur.
-*   **Plan de Reprise d'Activité (PRA) :**
-    *   Les backups S3 doivent être répliqués de manière asynchrone dans une autre région géographique. (ex: Région principale à Paris, backup PRA à Francfort).
+*   **Kubernetes (K8s) :** Orchestrateur standardisé pour les microservices (Authentification, Matchmaking, Économie, IA Gateways). Les configurations sont indépendantes des fournisseurs cloud (EKS, GKE, AKS, ou Bare-Metal K8s).
+*   **Agones (Game Server Management) :** Extension K8s dédiée au cycle de vie des serveurs de jeu Bevy (Rust, headless).
+    *   **Autoscaling Dynamique :** Gestion des *Fleets* Agones basée sur des webhooks de matchmaking. Allocation de *GameServer* conteneurisés par instance/donjon.
+    *   **Gestion du cycle de vie stateful :** Marquage des serveurs "En cours de partie" pour empêcher l'éviction par K8s lors d'opérations de maintenance (draining).
+*   **Trafic Temps Réel :** Les clients s'y connectent via **QUIC / WebTransport**, permettant un multiplexage fiable ou non fiable avec une latence optimale, contournant le *Head-of-Line Blocking* du TCP.
 
 ---
 
-## 5. Surveillance (Logs & Monitoring)
+## 3. Architecture des Données (Persistence Layer)
 
-Impossible de gérer un MMO sans observabilité complète, d'autant plus avec des agents IA agissant en autonomie.
+L'architecture s'appuie sur le paradigme **Polyglot Persistence**, chaque moteur de base de données étant choisi pour son profil de performance spécifique.
 
-*   **Collecte Unifiée :** **OpenTelemetry**
-    *   Standardise la collecte des traces, métriques et logs générés par les serveurs Rust et les bases de données.
-*   **Métriques et Alerting :** **Prometheus** + **Grafana**
-    *   Prometheus agrège les données de performance (CPU/RAM des serveurs Bevy, latence QUIC, TPS de CockroachDB).
-    *   Grafana visualise ces données. Des alertes (vers Slack ou PagerDuty) sont configurées (ex: si le délai de création d'un conteneur Agones > 5 secondes, ou si le CPU global > 80%).
-*   **Logs Centralisés :** **Loki** (Grafana Stack) ou **ELK** (Elasticsearch Logstash Kibana)
-    *   Tous les serveurs envoient leurs logs stdout/stderr vers Loki. Les logs sont indexés pour une recherche rapide. Crucial pour tracer les décisions des agents IA (auditabilité).
-
----
-
-## 6. Mises à Jour (Patch Management)
-
-Les mises à jour d'un MMO "AI-Native" se font sur plusieurs plans :
-
-1.  **Mises à jour Client (WGPU) :** Les joueurs téléchargent un nouveau binaire. Rétrocompatibilité requise pendant les transitions.
-2.  **Mises à jour Serveur de Jeu (Agones) :** Les nouvelles versions sont déployées sur de nouvelles flottes de serveurs. Les instances existantes (avec des joueurs actifs) ne sont pas tuées ; elles se drainent naturellement quand les joueurs se déconnectent.
-3.  **Mises à jour IA (Modèles LLM) :** Les agents IA via MCP sont mis à jour côté serveur sans impacter le jeu, comme des microservices indépendants.
-4.  **Mises à jour Schéma BDD :** Gérées par des outils de migration (ex: Flyway ou Liquibase intégré au CI), sans lock de table bloquant, supporté nativement par CockroachDB.
+*   **Données Transactionnelles Cœur (CockroachDB) :**
+    *   *Usage :* Identités, Inventaires, Transactions économiques.
+    *   *Rôle :* NewSQL distribué garantissant une forte cohérence (ACID) à l'échelle globale. Les données des joueurs sont "épinglées" dans la région où ils jouent principalement pour minimiser la latence en écriture, tout en restant accessibles globalement.
+*   **Mémoire Sémantique et IA (Qdrant / Milvus) :**
+    *   *Usage :* Contexte des PNJ, historiques conversationnels (RAG - Retrieval-Augmented Generation).
+    *   *Rôle :* Base de données vectorielle permettant la recherche par similarité cosinus avec une très faible latence (< 10ms) pour alimenter les agents IA.
+*   **Télémétrie, Analytique et Logs d'Audit (ClickHouse) :**
+    *   *Usage :* Analyse des comportements, détection de triche, logs système massifs.
+    *   *Rôle :* Moteur OLAP orienté colonnes, capable d'ingérer et de requêter des millions de lignes par seconde.
 
 ---
 
-## 7. Sécurité Opérationnelle
+## 4. Stratégie d'Intelligence Artificielle Hybride
 
-Un MMO est une cible constante (DDoS, triche, exploitation économique). L'ajout d'IA augmente la surface d'attaque (Prompt Injection).
+Afin de combiner contrôle des coûts, confidentialité et capacités de pointe, l'infrastructure IA adopte une approche mixte.
 
-*   **Protection DDoS et WAF :** Un service comme Cloudflare (mode TCP/UDP proxy pour le jeu) ou AWS Shield pour absorber les attaques massives en périphérie du réseau.
-*   **Zero Trust & Gestion des Secrets :** **HashiCorp Vault** ou le Secret Manager du Cloud.
-    *   Aucun mot de passe de base de données en clair dans le code. Rotation automatique des credentials.
-    *   Chaque pod Kubernetes tourne avec le minimum de privilèges IAM nécessaires.
-*   **Sécurité des IA (Sandboxing) :**
-    *   Les agents IA communiquant via MCP n'ont *aucun droit de modification direct* en base de données. Ils génèrent des *intentions* (ex: "donner 10 pièces d'or à X") qui sont vérifiées par les règles autoritaires du serveur Bevy en Rust (validation de limites de taux, de contexte).
-*   **Rate Limiting :** Imposé strict aux niveaux réseau et applicatif, à la fois pour les joueurs (spam de requêtes) et pour les appels coûteux aux API LLM.
+*   **IA Interne (On-Premise / Hosted LLMs) :**
+    *   Déploiement de modèles Open Source (ex: Llama 3, Mistral) sur des *Node Pools* Kubernetes dédiés équipés d'accélérateurs matériels (GPU).
+    *   Utilisés pour des tâches massives et récurrentes (génération de PNJ mineurs, analyse de sentiment en temps réel, équilibrage dynamique) où le coût par token serait prohibitif chez un fournisseur externe.
+*   **IA Externe (API Provider) :**
+    *   Intégration d'API externes de pointe (OpenAI, Anthropic) réservées à des tâches complexes (génération de quêtes épiques, PNJs cruciaux nécessitant un haut raisonnement).
+*   **AI API Gateway (ex: LiteLLM) :**
+    *   Une gateway applicative unifie l'accès à ces modèles (internes et externes) pour le backend. Elle gère le routage, le cache sémantique, le rate limiting et l'observabilité des requêtes.
+
+---
+
+## 5. Haute Disponibilité (HA) et Plan de Reprise d'Activité (PRA)
+
+La pérennité des données est assurée par des objectifs de résilience stricts mesurés via le **RTO** (Recovery Time Objective) et le **RPO** (Recovery Point Objective).
+
+*   **HA et Tolérance aux pannes :**
+    *   La perte d'une zone de disponibilité (AZ) au sein d'une région est transparente (failover automatique de CockroachDB et K8s).
+    *   La perte d'une région entière redirige automatiquement les nouveaux joueurs vers la région survivante la plus proche.
+*   **Plan de Sauvegarde et PRA :**
+    *   **Bases Transactionnelles (RPO < 5 minutes, RTO < 1 heure) :** Sauvegardes continues dans le stockage objet (S3) et Point-in-Time Recovery (PITR) natif de CockroachDB permettant de rembobiner l'état exact de l'économie avant un incident.
+    *   **Données Non-Critiques (Vector/Analytique) (RPO = 24 heures) :** Snapshots journaliers stockés à froid.
+    *   **Infrastructure as Code (IaC) :** Toute l'infrastructure (Terraform) et le déploiement applicatif (ArgoCD / GitOps) peuvent être re-déployés *from scratch* dans une région vierge en moins de 30 minutes.
+
+---
+
+## 6. Observabilité Globale (Monitoring & Tracing)
+
+L'opérabilité de cette architecture complexe est garantie par une pile d'observabilité centralisée.
+
+*   **Collecte Unifiée :** Les agents **OpenTelemetry** déploient la télémétrie sur tous les conteneurs (traces distribuées, logs, métriques).
+*   **Surveillance et Alerting :**
+    *   **Prometheus** (métriques de l'infrastructure et de l'applicatif).
+    *   **Grafana** (tableaux de bord unifiés, SLOs, SLIs). Alerting configuré via PagerDuty / Slack pour les seuils critiques (CPU/RAM des serveurs Bevy, latence P99).
+*   **Traçabilité Distribuée :** Utilisation de **Jaeger** ou Tempo pour suivre le cycle de vie complet d'une requête, du client jusqu'aux appels des API LLM.
+
+---
+
+## 7. Sécurité Opérationnelle (SecOps)
+
+Une architecture intégrant des agents IA requiert une sécurité de type *Zero Trust*.
+
+*   **Périmètre et Protection Edge :** WAF (Web Application Firewall) et protection DDoS multi-couches gérés par le CDN.
+*   **Gestion des Identités et des Secrets :**
+    *   **HashiCorp Vault :** Injection dynamique de credentials éphémères pour les accès à la base de données (zéro mot de passe statique).
+    *   IAM strict via Kube2IAM / Workload Identity pour limiter les accès aux buckets S3 et autres ressources cloud.
+*   **Sandboxing IA et Contrôle d'Intégrité :**
+    *   Les modèles IA utilisent le protocole **MCP (Model Context Protocol)** pour s'interfacer avec le moteur de jeu.
+    *   *Principe de validation forte :* Les intentions générées par l'IA (transferts d'objets, altérations du monde) sont systématiquement validées par la logique autoritaire (Rust) du serveur Bevy. L'IA ne possède aucune permission d'écriture directe en base de données.
+*   **Pipeline DevSecOps :** Scan continu des images Docker (Trivy), analyse statique de code (SAST), et vérification de la configuration Kubernetes (Checkov) intégrés au CI/CD.
