@@ -95,3 +95,48 @@ La logique de peuplement et d'interaction s'articule autour de volumes invisible
   - `TriggerVolume`: Le volume physique de détection.
   - `OnEnterEvent` / `OnLeaveEvent`: Les actions à exécuter.
 - *Workflow* : Lorsque le collider d'un joueur intersecte un `TriggerVolume` configuré comme "Entrée de Donjon", le serveur émet un `PlayerTransitionEvent`, désinscrit le joueur du Chunk actuel, l'inscrit dans l'Instance du donjon, et envoie un paquet RPC au client pour lancer le chargement des assets correspondants.
+
+## 5. Plan d'Action Stratégique et Planification des Sprints
+
+**Capacité de l'équipe :** 100 collaborateurs (Ingénieurs Backend Rust, Développeurs Moteur/Client WGPU, Architectes Réseau, Technical Artists).
+**Durée d'un Sprint :** 6 mois.
+
+L'objectif de cette planification est de déployer de manière optimale cette force de frappe conséquente, en respectant la stricte dépendance technique des fondations avant d'engager la production massive d'assets graphiques.
+
+### 5.1. Structuration de l'équipe (100 personnes) pour le Sprint 1
+Pour gérer efficacement une équipe de 100 personnes sur un socle technique pur, l'équipe est divisée en plusieurs pôles (Squads/Tribes) :
+- **Pôle ECS & Simulation Serveur (25 personnes) :** Implémentation du Headless Server Bevy, gestion de l'état (CombatStats, PlayerId), implémentation de Rapier3D pour la validation côté serveur.
+- **Pôle Réseau & Infrastructure (20 personnes) :** Implémentation de WebTransport/QUIC, gestion du chunking spatial asynchrone, delta state serialization, et orchestration Kubernetes/Agones.
+- **Pôle Architecture Client (20 personnes) :** Intégration du rendu WGPU, AssetServer, Interpolation, prédiction locale, et interface UI Data-driven.
+- **Pôle Level Design Technique & Outils (20 personnes) :** Création du système de chargement des fichiers de scènes JSON/RON, génération statique du NavMesh, pipeline de hot-reloading.
+- **Pôle Assurance Qualité (QA) & DevOps (15 personnes) :** Tests d'intégration, CI/CD, métriques Prometheus/Grafana, automatisation de la validation anti-cheat.
+
+### 5.2. Découpage en Sprints
+
+#### Sprint 1 (Mois 1 à 6) : Fondations Techniques et Architecture "Headless"
+*Focus exclusif sur la technique : Aucune production d'assets graphiques finaux. L'objectif est d'obtenir un monde navigable en primitives 3D (Cubes, Sphères) synchronisé massivement en réseau.*
+
+**Livrables du Sprint 1 :**
+- **Architecture Serveur :** Serveur autoritaire fonctionnel tournant sous Bevy Headless. Moteur de collision primitif (Rapier3D) validant le déplacement de centaines d'entités simultanément.
+- **Streaming & Chunking :** Le système de grille spatiale charge et décharge correctement les zones d'intérêt (AOI - Area of Interest) des joueurs.
+- **Parsing d'Environnement :** Le serveur charge un "monde" via un fichier JSON/RON définissant les `SpawnZone`, `TriggerVolume`, et l'emplacement des obstacles.
+- **Client Terminal :** Le client se connecte au serveur et instancie des `SceneBundle` de primitives (blockout) basés sur les paquets reçus. Mouvement fluide grâce à la prédiction locale.
+- **Système de Navigation :** Pathfinding PNJ fonctionnel côté serveur utilisant le NavMesh pré-compilé.
+
+#### Sprint 2 (Mois 7 à 12) : Pipeline WGPU, Outils d'Édition et Pré-Production Visuelle
+*Transition vers le rendu visuel et déploiement des outils de création d'environnement.*
+
+**Livrables du Sprint 2 :**
+- **Pipeline Rendu "Rétro" :** Implémentation des shaders WGSL custom (Nearest Neighbor, Vertex Lighting, Fog).
+- **Outils World Building :** Éditeur interne ou pipeline d'export Blender vers JSON/RON parfaitement fonctionnel, permettant le placement d'instances 3D par les level designers.
+- **Instances de Donjon :** Isolement réseau et logique permettant la création de "Worlds" Bevy temporaires pour les instances fermées.
+- **Système d'Événements Spatiaux :** Fonctionnement complet des Trigger Volumes (téléportation, activation de scripts/spawns).
+- **Intégration Assets Test :** Intégration d'un biome complet (arbres instanciés, architecture blockout avancée) respectant les limites de Polycount (max 5k polys par bâtiment majeur).
+
+#### Sprint 3 (Mois 13 à 18) : Production de Masse et Intégration IA
+*Avec un socle technique et des outils robustes, l'équipe intègre la direction artistique finale et les agents IA.*
+
+**Livrables du Sprint 3 :**
+- Remplacement global des blockouts par des assets 3D texturés (glTF 2.0).
+- Finalisation des Atlas de textures et optimisation massive des Draw Calls.
+- Intégration des endpoints MCP (Model Context Protocol) permettant à l'IA de modifier l'état des Spawners ou de lire les Triggers.
