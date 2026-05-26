@@ -24,7 +24,7 @@
 9. [Ingénierie des Dialogues et Scripting](#9-ingénierie-des-dialogues-et-scripting)
 10. [Systèmes d'Événements Dynamiques](#10-systèmes-dévénements-dynamiques)
 11. [Direction Audio-Visuelle et Cinématographique](#11-direction-audio-visuelle-et-cinématographique)
-12. [Spécifications Techniques IA (Horizon 2030)](#12-spécifications-techniques-ia-horizon-2030)
+12. [Spécifications Techniques IA & Infrastructure (Horizon 2030)](#12-spécifications-techniques-ia--infrastructure-horizon-2030)
 13. [Glossaire Technique et Narratif](#13-glossaire-technique-et-narratif)
 
 ---
@@ -298,24 +298,31 @@ Gérés par l'orchestrateur serveur, ces événements forcent le joueur à s'ada
 
 ## 11. DIRECTION AUDIO-VISUELLE ET CINÉMATOGRAPHIQUE
 
-Le projet obéit à des contraintes techniques rétro-esthétiques sévères visant à instaurer un malaise cognitif.
+Le projet obéit à des contraintes techniques rétro-esthétiques sévères visant à instaurer un malaise cognitif. Le pipeline 3D suit un flux high-to-low poly (sculpt high-poly vers retopologie low-poly) pour atteindre l'esthétique PS2. Tous les assets sont exportés en glTF 2.0 (.glb) pour Bevy, respectant le système de coordonnées (+Y up, -Z forward), un os racine à (0,0,0) et un maximum de 4 os par vertex.
 
 ### 11.1. Contraintes Visuelles (Architecture Bevy / Esthétique PS2)
-- **Modélisation Low-Poly :** Environnements et personnages bridés aux alentours de 5,000 triangles. Texturisation soumise au filtrage Nearest-Neighbor (absence d'anti-aliasing) procurant une netteté rugueuse.
-- **Éclairage Restreint :** Utilisation exclusive de matériaux "Unlit" (KHR_materials_unlit). Les ombres et l'occlusion ambiante (AO) sont statiquement gravées (baking) dans les textures diffuses ou les couleurs de vertex. Absence de physically based rendering (PBR) ou de normal maps.
-- **Cinématographie Algorithmique :** Utilisation de caméras à axes fixes (plans pré-calculés, plongées écrasantes) lors des séquences d'événements, forçant un angle de vision oppressant et réduisant artificiellement la perception de l'espace.
+- **Modélisation Low-Poly :** Environnements et personnages bridés aux alentours de 5,000 triangles. Triangulation manuelle stricte (pas de Sub-D). L'optimisation des draw calls exige l'utilisation d'atlas de textures spécifiques par biome.
+- **Éclairage Restreint :** Utilisation exclusive de matériaux "Unlit" (KHR_materials_unlit) soumis au filtrage Nearest-Neighbor. Les ombres et l'occlusion ambiante (AO) sont statiquement gravées (baking) dans les textures diffuses ou les couleurs de vertex. Absence de physically based rendering (PBR) ou de normal maps.
+- **Architecture VFX (Effets Visuels) :** Les effets (magie, sang, corruption) utilisent des billboards 2D, des polygones très faibles, et de l'additive blending. Le client Bevy fonctionne comme un simple "terminal" : il reçoit des événements du serveur autoritaire pour déclencher des VFX locaux, ces derniers n'ayant absolument aucun impact ni calcul sur la logique de gameplay.
+- **Cinématographie Algorithmique :** Utilisation de caméras à axes fixes lors des séquences d'événements, forçant un angle de vision oppressant et réduisant artificiellement la perception de l'espace.
 
 ### 11.2. Architecture Sonore Dissonante
-- **Conception Audio :** Contraste majeur avec l'horreur visuelle. L'environnement sonore (BGM) repose sur des compositions classiques douces, apaisantes, évoquant les MMORPG idylliques des années 2000.
-- **Objectif Psychologique :** Cette musique "sans fatigue auditive" entre en dissonance totale avec les hurlements ambiants et la brutalité des combats, renforçant le sentiment que le "système du jeu" est indifférent à la souffrance de l'avatar. Le faux réconfort auditif exacerbe la réalité cauchemardesque.
+- **Conception Audio :** Contraste majeur avec l'horreur visuelle. L'environnement sonore (BGM) repose sur des compositions classiques douces, apaisantes, évoquant les MMORPG médiévaux des années 2000. Les bruitages et l'ambiance restent ancrés dans un cadre de fantasy classique (bruits d'épées, arcs, forêts, cavernes).
+- **Objectif Psychologique :** Cette musique "sans fatigue auditive" entre en dissonance totale avec la brutalité systémique, renforçant le sentiment que le "système du jeu" est indifférent à la souffrance de l'avatar. Le faux réconfort auditif exacerbe la réalité cauchemardesque.
 
 ---
 
-## 12. SPÉCIFICATIONS TECHNIQUES IA (HORIZON 2030)
+## 12. SPÉCIFICATIONS TECHNIQUES IA & INFRASTRUCTURE (HORIZON 2030)
 
-Le backend Rust/Bevy s'interface avec le Model Context Protocol (MCP) pour simuler une intelligence dynamique chez certains PNJ majeurs, s'appuyant sur l'extraction d'informations (RAG).
+Le backend Rust/Bevy s'interface avec le Model Context Protocol (MCP) pour simuler une intelligence dynamique chez certains PNJ majeurs, soutenu par une infrastructure cloud-agnostique ultra-scalable.
 
-### 12.1. Contrat de Données MCP (Profil Logique : Kazuki)
+### 12.1. Infrastructure Matérielle (Cible 2030)
+- **Déploiement & Orchestration :** Les serveurs de jeu Bevy sont conteneurisés et orchestrés via Kubernetes, utilisant **Agones** pour la gestion dynamique des flottes de serveurs dédiés.
+- **Persistance des Données :** L'état global du monde, l'économie et les profils des joueurs sont gérés par **CockroachDB** (PostgreSQL distribué).
+- **Observabilité :** Centralisée via OpenTelemetry, Prometheus, Grafana pour les métriques/alertes, et Jaeger/Tempo pour le distributed tracing. Les logs massifs de combat et d'économie sont ingérés par **ClickHouse**.
+- **Vectorisation IA :** Le système de mémoires RAG des PNJ est stocké et requêté via une base de données vectorielle (Qdrant ou Milvus).
+
+### 12.2. Contrat de Données MCP (Profil Logique : Kazuki)
 ```json
 {
   "agent_id": "kazuki_overlord_node",

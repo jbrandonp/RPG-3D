@@ -31,19 +31,22 @@ L'ancien système "classless" est remplacé par une arborescence de spécialisat
 ## 3. MORT PERMANENTE ET ARTÉFACTS RARES
 La condition d'échec par défaut (`HP == 0` sans mécanisme de capture) mène à la suppression définitive du profil (Perma-Death).
 - **Contournement Système :** L'utilisation d'"Artéfacts Rares" (ex: *Soul-Binding Runes*) consomme l'objet lors du coup fatal, forçant une téléportation asynchrone vers un Safe Node pré-défini.
-- Ce mécanisme doit être validé côté serveur pour prévenir la triche client.
+- Ce mécanisme doit être strictement validé côté serveur pour prévenir toute désynchronisation ou triche client.
 
 ## 4. MÉCANIQUE DE REBIRTH (Renaissance Hybride)
 Si le joueur subit un Game Over (`HP == 0`) pendant que le `Component` `IncubationStatus` est actif, le serveur purge le personnage principal mais crée une nouvelle Entité Niveau 1, injectant un trait spécifique.
 - `Goblin_Genome` : +20% Vitesse d'attaque, -30% Charisme Humain.
 - `DeepOne_Genome` : Résistance magique accrue.
 
-## 5. ARCHITECTURE RÉSEAU (WebTransport / QUIC)
-La rudesse des punitions exige une réactivité sans faille et une architecture anti-triche stricte ("Le client propose, le serveur dispose").
-- Les mouvements et le positionnement sont streamés via des canaux **Unreliable UDP** (QUIC Datagrams) avec de la prédiction côté client.
-- Les actions irréversibles (consommation d'un Artéfact Rare, validation d'un état de Capture ou de Mort, loot d'objets vitaux) sont traitées via des **Bidirectional Streams (Reliable)**.
-- Les mises à jour de l'état mental (Trauma, Corruption) peuvent être synchronisées en arrière-plan via des **Unidirectional Streams**.
+## 5. ARCHITECTURE DU MONDE ET GESTION DES INSTANCES
+La géographie de Velnora et l'apparition des "Nids" requièrent une scission stricte de l'environnement virtuel.
+- **Monde Ouvert (Asynchrone) :** Le client gère le chunking asynchrone via des `SceneBundle`. Les définitions serveur du monde reposent sur des fichiers de sérialisation légers (JSON/RON).
+- **Instances de Nids (Donjons) :** Pour gérer la prolifération Goblinoïde, chaque nid est instancié côté serveur sous la forme d'un `World` Bevy indépendant.
+- **Moteur Physique Headless :** Le serveur autoritaire n'effectue aucun calcul sur des "Mesh Colliders" lourds. Toute la navigation et les collisions sont traitées via un **NavMesh statique** et des colliders mathématiques primitifs exclusifs (sphères, boîtes, capsules).
 
-## 6. DYNAMIQUES DE MONDE ET RENDU (Le Brouillard Noir)
-- Le serveur orchestre une horloge globale. Lorsqu'une zone est consumée par le Brouillard, le serveur notifie les clients de modifier l'état visuel du Chunk correspondant.
-- **Rendu Visuel Client :** Le jeu impose l'utilisation de shaders basiques (`KHR_materials_unlit`) sans éclairage dynamique, limitant les modèles à 5,000 polygones avec un filtrage *Nearest-Neighbor*. Les ombres sont intégrées directement dans les textures (Baking), soulignant la rigidité cruelle de l'environnement PS2.
+## 6. ARCHITECTURE RÉSEAU ET NETCODE AVANCÉ (WebTransport / QUIC)
+La rudesse des punitions exige une réactivité absolue (Rollback) et une architecture anti-triche infaillible. Le principe directeur est : **« Le client propose, le serveur dispose »**.
+- **Mouvement et Prédiction :** Les mouvements sont streamés via des canaux **Unreliable UDP** (QUIC Datagrams). Le client effectue une prédiction locale, soumise à une stricte validation serveur.
+- **Lag Compensation & Rollback :** En cas de désaccord lors d'un combat rapide (ex: esquive d'une attaque d'Ogre), le serveur utilise une technique de *rollback* pour valider ou rejeter l'impact en fonction de l'historique précis des positions, envoyant une correction au client.
+- **Transactions Critiques :** Les actions irréversibles (consommation d'Artéfacts, validation de Rebirth, modifications d'inventaire) transitent exclusivement par des **Bidirectional Streams (Reliable)**.
+- **Observabilité :** L'état mental (Trauma, Corruption) et les événements locaux sont poussés vers ClickHouse via des **Unidirectional Streams**.
