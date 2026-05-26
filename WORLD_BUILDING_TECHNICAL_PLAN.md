@@ -1,96 +1,97 @@
-# Plan Technique : Modélisation et Mise en Place du Monde
+# Spécifications Techniques : Modélisation et Intégration du Monde (World Building)
 
-Ce document définit les standards techniques et le pipeline de création pour la modélisation des décors et l'intégration des scènes dans le moteur **Bevy (Rust)** pour un projet de MMORPG avec une direction artistique de type **PS2 / Metin2**.
-
----
-
-## 1. Direction Artistique & Contraintes Techniques (Style PS2 / Metin2)
-
-Pour respecter la volonté d'avoir un client "Terminal" ultra-léger et un rendu rétro, les contraintes suivantes doivent être appliquées à toutes les créations 3D :
-
-### Modélisation (Low-Poly)
-- **Topologie** : Triangulation manuelle encouragée pour un look "crunchy". Pas de subdivision (Sub-D).
-- **Budget par modèle** :
-  - **Bâtiments simples** : 500 - 2000 triangles.
-  - **Grands bâtiments / Palais** : 2000 - 5000 triangles.
-  - **Arbres / Flore** : 50 - 300 triangles (utilisation massive de plans/billboards avec canal alpha).
-  - **Props (ruines, caisses, etc.)** : 10 - 200 triangles.
-- **Détails** : Les détails (tuiles, fissures, briques) doivent être gérés par la texture, pas par la géométrie.
-
-### Textures et Matériaux
-- **Basse Résolution** : Textures de 64x64, 128x128 à 256x256 max. Rendu "Pixelated" (Filtrage de texture paramétré sur *Nearest/Point* et non *Bilinear/Trilinear* dans WGPU).
-- **Matériaux** : Matériaux Unlit ou très basiques (Diffuse uniquement, avec éventuellement du Vertex Color pour simuler un éclairage ambiant "Bake" statique). Pas de PBR (Physically Based Rendering), pas de Normal Maps ni de Metallic/Roughness.
-- **Atlas de Textures** : Regrouper au maximum les textures d'un même biome sur un seul Atlas (ex: 512x512) pour limiter les *draw calls*.
+## 1. Objectif et Portée du Document
+Ce document de conception technique (TDD) définit les standards de modélisation, le pipeline de production des assets 3D (décors, bâtiments, forêts, donjons, ruines), et l'architecture d'intégration des scènes dans le moteur **Bevy (Rust)**. Il s'inscrit dans la vision d'un MMORPG à architecture « Client Terminal » avec une direction artistique rétro (génération PlayStation 2 / Metin2).
 
 ---
 
-## 2. Pipeline Générique de Création
+## 2. Contraintes Visuelles et Standards Techniques (Style "Retro PS2")
 
-Ce pipeline s'applique à tous les types d'environnements (Forêts, Bâtiments, Donjons, Ruines).
+Afin de garantir l'homogénéité visuelle et le maintien de performances optimales sur des configurations matérielles anciennes ou modestes, les assets 3D doivent respecter les directives suivantes :
 
-### Étape A : Blockout (Maquette 3D)
-- Création des volumes grossiers dans Blender.
-- Export et test dans Bevy pour valider l'échelle (comparée au collider du joueur) et les lignes de vue.
+### 2.1. Topologie et Polygones (Low-Poly)
+- **Topologie** : Triangulation délibérée. Les modeleurs doivent utiliser des maillages non lissés (Flat Shading prédominant, Smooth Shading réservé aux géométries organiques spécifiques). L'utilisation de modificateurs de subdivision (Subdivision Surface) est formellement proscrite.
+- **Budgets Polycount (par instance)** :
+  - **Bâtiments majeurs / Palais** : 2 000 à 5 000 triangles.
+  - **Bâtiments standards (maisons, boutiques)** : 500 à 2 000 triangles.
+  - **Végétation (Arbres, Buissons)** : 50 à 300 triangles (utilisation prédominante de *billboards* et de plans croisés avec masques alpha).
+  - **Props (Caisses, Barils, Ruines mineures)** : 10 à 200 triangles.
+- **Détails Structurels** : Les aspérités (fissures, briques, tuiles) ne doivent pas être modélisées géométriquement. Elles doivent être intégralement gérées via le texturing (Albedo/Diffuse).
 
-### Étape B : Modélisation et UV Mapping
-- Affinage des formes en respectant le budget "PS2".
-- Dépliage UV optimisé pour l'utilisation d'Atlas de textures communs.
-
-### Étape C : Texturing et Baking
-- Peinture des textures (diffuse).
-- *Baking* optionnel d'une Ambient Occlusion basique directement dans la texture diffuse ou via les *Vertex Colors* pour ajouter de la profondeur sans coût de rendu en temps réel.
-
-### Étape D : Intégration et Export
-- Configuration des origines (Pivot) au bas des objets (ex: au niveau des racines de l'arbre, fondation du bâtiment) pour un placement facile sur le terrain.
-- Export au format **GLTF/GLB**.
+### 2.2. Textures et Shading
+- **Résolution** : Les textures individuelles doivent être limitées à des résolutions allant de `64x64` à `256x256` pixels.
+- **Filtrage (Texture Filtering)** : Le moteur WGPU/Bevy doit être configuré pour utiliser un échantillonnage par point (`Nearest Neighbor` / `Point Filtering`) afin de désactiver l'interpolation bilinéaire ou trilinéaire, produisant ainsi un rendu net et "pixélisé".
+- **Pipeline Matériau** :
+  - Utilisation exclusive de matériaux *Unlit* (sans calcul d'éclairage dynamique complexe) ou de modèles de shading de Lambert basiques.
+  - **Interdiction du PBR** (Physically Based Rendering). L'utilisation de *Normal Maps*, *Metallic Maps* ou *Roughness Maps* est interdite.
+  - **Éclairage statique (Baking)** : L'occlusion ambiante (AO) et les ombres portées statiques doivent être "bakées" directement dans la texture diffuse (`Albedo`) ou gérées via les couleurs de sommets (`Vertex Colors`).
+- **Optimisation (Draw Calls)** : Les textures d'un même biome (ex: Forêt Sombre) doivent être regroupées au sein de *Texture Atlases* (ex: atlas de `512x512` ou `1024x1024` pixels) pour réduire drastiquement les appels de rendu (*draw calls*).
 
 ---
 
-## 3. Mise en place Technique des Scènes (Architecture Bevy ECS)
+## 3. Pipeline de Production des Assets 3D
 
-La mise en place du monde se fait en séparant strictement la logique client (Rendu WGPU) de la logique serveur (Simulation Headless).
+Ce pipeline normalise la création de tous les éléments environnementaux avant leur intégration dans Bevy.
 
-### 3.1. Architecture des Scènes et Chargement (Client & Serveur)
+### 3.1. Phase 1 : Blockout (Gabarit 3D)
+- Création de primitives géométriques (boîtes, cylindres) pour définir les volumes et les échelles.
+- Importation immédiate dans le moteur Bevy pour validation des lignes de vue, de l'échelle par rapport à l'avatar du joueur, et des contraintes de navigation.
 
-- **Map Chunks** : Le monde ne charge pas en un seul bloc. Il est divisé en Chunks.
-- Utilisation de `SceneBundle` de Bevy côté client pour spawner les GLTF.
-- Côté serveur (Headless), les données de map sont chargées depuis des fichiers de configuration (JSON, RON, ou base de données) contenant les positions, rotations, et bounding boxes des entités.
+### 3.2. Phase 2 : Modélisation et Dépliage UV
+- Remplacement des primitives par les modèles finaux respectant les budgets alloués.
+- Dépliage UV (*UV Unwrapping*) optimisé. Les UVs doivent être disposés de manière à maximiser l'utilisation de l'espace dans les *Texture Atlases* partagés. Le chevauchement d'UVs (UV overlapping) est encouragé pour les éléments symétriques ou répétitifs.
 
-### 3.2. Collisions et Physique (Serveur Autoritaire)
+### 3.3. Phase 3 : Texturing et Baking
+- Peinture des textures (Hand-painted texturing) directement sur le modèle ou via des logiciels spécialisés.
+- *Baking* de l'éclairage ambiant dans le canal des *Vertex Colors* ou directement fusionné avec la texture `Diffuse`.
 
-- **NavMesh (Navigation Mesh)** : Le serveur utilise un NavMesh statique par zone/chunk pour valider les déplacements des joueurs et l'IA des mobs.
-- **Colliders Primitifs** : Pour l'environnement, ne jamais utiliser de mesh-colliders complexes. Remplacer les bâtiments et murs par des primitives simples (Cylindres, Boîtes) invisibles côté serveur.
-- Composant typique : `Collider { shape: ColliderShape::Box(x, y, z) }` couplé à une entité statique.
+### 3.4. Phase 4 : Exportation et Standardisation
+- **Format cible** : L'intégralité des modèles doit être exportée au format `glTF 2.0` (fichiers `.glb` préférés pour l'encapsulation des textures).
+- **Points de pivot (Origin)** : L'origine du mesh doit être placée à sa base logique (ex: au niveau du sol pour un bâtiment, à la racine pour un arbre) afin de faciliter le placement procédural ou manuel sur la carte.
+- **Convention de nommage** : `[Biome]_[Type]_[Nom]_[Variante].glb` (ex: `Forest_Tree_Pine_A.glb`, `City_Building_Blacksmith_A.glb`).
 
-### 3.3. Zones Spécifiques et Volumes Interactifs
+---
 
-**Zones de Spawn (Monstres, Ressources, Joueurs)**
-- Implémentées comme des volumes invisibles (composant `SpawnZone`).
-- **Composants ECS** :
-  - `Position`
-  - `Volume` (Rayon pour sphère ou Extents pour box)
-  - `SpawnerConfig` (Type d'entité, Fréquence de respawn, Capacité max)
-- Le serveur vérifie périodiquement avec un `System` quels Spawners ont besoin de régénérer des entités.
+## 4. Architecture et Intégration des Scènes dans Bevy ECS
 
-**Zones d'Événement (Triggers / Teleporters / Entrées de Donjon)**
-- Reposent sur la détection d'intersection (AABB ou Radius).
-- **Composants ECS** :
-  - `TriggerArea`
-  - `OnEnterEvent(Action)` / `OnLeaveEvent(Action)`
-- Exemple : Un joueur entre dans l'AABB "Entrée Donjon" $\rightarrow$ Le système détecte la collision $\rightarrow$ Envoie un événement `PlayerChangeZoneEvent` $\rightarrow$ Le serveur déplace l'entité et notifie le client pour charger la nouvelle scène.
+L'architecture du monde repose sur une stricte séparation entre le **Serveur Autoritaire** (logique, physique, événements) et le **Client** (rendu visuel, inputs).
 
-### 3.4. Gestion des Biomes (Forêts, Ruines, Donjons, Bâtiments)
+### 4.1. Chargement Spatial (Chunking)
+- Le monde continu est divisé en sections (Chunks) gérées via un système de grille spatiale.
+- **Client-side** : Chargement asynchrone des modèles `.glb` via le `AssetServer` et instanciation avec des composants `SceneBundle`.
+- **Server-side** : Le serveur "Headless" ne charge aucun asset graphique. Il parse des fichiers de définition de scène structurés (JSON, RON) contenant uniquement les identifiants d'entités, leurs positions (Transform), rotations et échelles.
 
-- **Forêts** : Les arbres sont instanciés (Instanced Rendering) côté client pour minimiser les *draw calls*. Côté serveur, chaque arbre coupable possède un `Health` et un composant `ResourceNode`. Les arbres de décor sont ignorés par le serveur sauf pour le collider.
-- **Bâtiments / Villes** : Entités regroupées. Les portes ont un composant `Interactable` géré par le serveur (Etat Ouvert/Fermé synchronisé).
-- **Ruines et Décors Statiques** : Mappés uniquement comme obstacles dans le NavMesh serveur. Côté client, pure cosmétique.
-- **Donjons** : Instances privées. Lorsqu'un groupe entre, le serveur clone l'architecture de base du donjon dans un "World" ou une isolation logique temporaire avec son propre gestionnaire d'événements.
+### 4.2. Physique et Navigation (Serveur Autoritaire)
+- **NavMesh (Navigation Mesh)** : La topographie navigable (sol, escaliers) est compilée sous forme de NavMesh statique. Il est utilisé par le serveur pour le *Pathfinding* des PNJ/Monstres et pour valider (Anti-Cheat) les déplacements soumis par les clients.
+- **Colliders Primitifs** : Aucun *Mesh Collider* complexe n'est utilisé. L'environnement physique (murs, obstacles) est représenté côté serveur par des géométries primitives strictes (Box, Sphere, Capsule, Cylinder) gérées par un moteur physique intégré (ex: Rapier3D).
+  - *Exemple ECS* : Un bâtiment visuel côté client correspond côté serveur à une entité dotée d'un `Transform` et d'un `Collider::cuboid(hx, hy, hz)`.
 
-### 3.5. Pipeline ECS de Chargement d'une Scène (Exemple de flux technique)
+### 4.3. Gestion des Entités par Biome
 
-1. `Client` envoie `RequestZoneLoad(ZoneID)` au `Serveur`.
-2. `Serveur` valide la position, renvoie `ZoneDataSync` (état des portes, mobs présents, joueurs dans la zone).
-3. `Client` (Bevy) lance un System asynchrone qui charge le GLTF de la zone.
-4. `Client` instancie les modèles (Arbres, Ruines, Terrain).
-5. `Client` applique le shader "PS2 Point Filtering" aux textures.
-6. `Serveur` maintient la simulation physique (NavMesh/Colliders) et notifie le client des `Transform` (positions) dynamiques via le flux réseau (Deltas).
+- **Forêts et Végétation Vaste** :
+  - *Client* : Utilisation massive de l'*Instanced Rendering* pour dessiner des milliers d'arbres avec un seul appel de rendu.
+  - *Serveur* : Les arbres purement décoratifs n'existent pas sur le serveur. Seuls les arbres récoltables (ex: Bûcheronnage) possèdent des entités serveur avec des composants `ResourceNode` et `Health`.
+- **Bâtiments et Ruines** :
+  - *Client* : Modèles statiques.
+  - *Serveur* : Modélisés via leurs `Colliders` de fondation. Les portes interactives ou les mécanismes (leviers) disposent d'entités distinctes synchronisées sur le réseau (composant `Interactable { state: Open | Closed }`).
+- **Donjons (Instances)** :
+  - Contrairement au monde ouvert (géré en chunks contigus), les donjons sont isolés.
+  - Le serveur instancie dynamiquement un nouvel environnement logique (ex: un nouveau `World` Bevy ou une arène encapsulée) lors de l'entrée d'un groupe, empêchant toute interaction avec l'extérieur.
+
+### 4.4. Volumes et Événements Spatiaux (Triggers)
+
+La logique de peuplement et d'interaction s'articule autour de volumes invisibles gérés par le serveur :
+
+**A. Volumes d'Apparition (Spawn Zones)**
+- Volumes (Cylindres ou AABB) dédiés à la génération d'entités.
+- Composants ECS serveur :
+  - `SpawnZone`: Identifie le volume.
+  - `SpawnerConfig`: Définit le type d'entité (ex: "Loup_Gris"), le délai de réapparition (Cooldown), et la limite de population locale (MaxCap).
+- *Workflow* : Un `System` serveur vérifie la population de la zone à intervalles réguliers et génère de nouvelles entités si nécessaire, en calculant une position aléatoire valide sur le NavMesh local.
+
+**B. Zones de Déclenchement (Triggers / Teleporters)**
+- Utilisés pour les transitions de carte (entrée de donjon, changement de région) ou le déclenchement de scripts (quêtes, pièges).
+- Composants ECS serveur :
+  - `TriggerVolume`: Le volume physique de détection.
+  - `OnEnterEvent` / `OnLeaveEvent`: Les actions à exécuter.
+- *Workflow* : Lorsque le collider d'un joueur intersecte un `TriggerVolume` configuré comme "Entrée de Donjon", le serveur émet un `PlayerTransitionEvent`, désinscrit le joueur du Chunk actuel, l'inscrit dans l'Instance du donjon, et envoie un paquet RPC au client pour lancer le chargement des assets correspondants.
