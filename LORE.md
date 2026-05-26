@@ -4,7 +4,7 @@
 | :--- | :--- |
 | **Projet** | ELARA'S BLACK MIST |
 | **Statut** | Document de Travail (WIP) |
-| **Version** | 3.3.0 |
+| **Version** | 3.4.0 |
 | **Périmètre** | Prototype (Pré-Alpha) & Vision étendue (Horizon 2030) |
 
 > **Avertissement :** Ce document est le point de référence central pour la direction narrative, la conception des personnages, la structure des quêtes et l'intégration des systèmes d'intelligence artificielle (MCP). Toute modification de l'univers de jeu doit être documentée ici pour assurer la cohérence entre le gameplay, la technique et l'histoire.
@@ -53,7 +53,7 @@ Le ton principal est **nihiliste, cru, oppressant et désespéré**, avec des mo
 ## 2. STRUCTURE DU RÉCIT (PLAN EN ARCS)
 
 **Arc 0 – Prologue (L'Incidence de Rupture)**
-Elara initie une ultime connexion au réseau d'*Eternal Realms*. Rupture systémique et fusion ontologique. Elle s'éveille sans ressources ni protection dans les vestiges de Syphralis. Poursuivie par les entités du Brouillard Noir, elle rejoint le flux massif de réfugiés fuyant vers Velnor. Premier contact létal avec les Goblinoïds.
+Elara initie une ultime connexion au réseau d'*Eternal Realms*. Rupture systémique et fusion ontologique. Déphasée temporellement, elle s'éveille sans ressources ni protection dans les vestiges de Syphralis, des décennies après la chute de la ville. Poursuivie par les entités du Brouillard Noir, elle rejoint le flux massif de réfugiés fuyant vers Velnor. Premier contact létal avec les Goblinoïds.
 
 **Arc 1 – La Survie en Ville (État de Proie)**
 Arrivée à Velnor, une métropole engorgée, rongée par la famine et dominée par les syndicats criminels. Focus sur la subsistance : accomplissement de tâches mineures, compromissions morales, et exploitation pour survivre. Établissement de connexions fragiles avec des figures locales (Griselda, Cocona, Capitaine Edward).
@@ -84,13 +84,15 @@ Du Vide Éternel (The Eternal Void) émergèrent trois concepts directeurs :
 2. **La Mère Écarlate (The Crimson Mother) :** Avatar de la prolifération charnelle incontrôlée et de la corruption organique. Génitrice des espèces prédatrices (Goblinoïds) et des abominations mutagènes.
 3. **L'Architecte (Le Concepteur Système) :** Entité représentant les protocoles, les règles logiques et les algorithmes de la simulation virtuelle *Eternal Realms*.
 
-### 3.2. Chronologie Systémique
-- **Ère Primordiale (An 0 – 800) :** Établissement des espèces. Prolifération des descendants de la Mère Écarlate. Conflit territorial entre les Deep Ones et les entités mutagènes.
-- **Ère des Saints (An 1321 – 1500) :** Manifestation de six figures fondatrices (Porteurs de reliques transcendantes). Établissement de la cité de Syphralis.
-- **Ère de la Colonisation (An 1550 – 1700) :** Arrivée des colons d'Ingeland. Conflits maritimes majeurs et refoulement des Deep Ones. Fondation de la capitale Velnor.
-- **Ère du Brouillard (An 1771 – Présent) :** Échec d'une manifestation cataclysmique de la Mère Écarlate, provoquant l'oblitération de Syphralis et l'émergence exponentielle du **Brouillard Noir**.
-- **La Singularité (An 2138 / Fin d'Eternal Realms) :** Colapsus et fusion des protocoles virtuels avec la trame du monde physique. Les derniers connectés, dont Kazuki, deviennent des "Élus" dotés d'attributs para-physiques.
-- **Cycle Actuel (1772 in-game) :** Éveil d'Elara. Le continent insulaire devient une zone de confinement fermée, rongée par l'avancée entropique du Brouillard.
+### 3.2. Le Déphasage Temporel (Time Dilation)
+La fin d'*Eternal Realms* a eu lieu en 2138 dans le monde physique. Toutefois, lors de la fusion avec l'univers de Velnora, la trame spatio-temporelle s'est fragmentée. Les joueurs connectés n'ont pas émergé simultanément. Certains, comme Kazuki, sont apparus il y a 400 ans, leur permettant de bâtir des empires. D'autres, comme Elara, émergent seulement aujourd'hui (1772 in-game), fraîchement arrachés à leur siècle.
+
+### 3.3. Chronologie Systémique
+- **Ère Primordiale (An 0 – 800) :** Établissement des espèces. Prolifération des descendants de la Mère Écarlate.
+- **Ère des Saints (An 1321 – 1500) :** Manifestation de six figures fondatrices. Apparition des premiers joueurs déphasés ("Saints"). Établissement de la cité de Syphralis.
+- **Ère de la Colonisation (An 1550 – 1700) :** Arrivée des colons d'Ingeland. Conflits maritimes majeurs et refoulement des Deep Ones. Kazuki émerge discrètement et commence l'édification du Sanctuaire des Ossements.
+- **L'Incident de Syphralis (An 1771) :** L'IA de l'Architecte s'incarne sous la forme de **"L'Enfant"** pour tenter de purger la Mère Écarlate. Lors de cet affrontement, la Déesse "trébuche" : l'Enfant est brisé, Syphralis est oblitérée, et le **Brouillard Noir** s'échappe de la blessure de la Mère.
+- **Cycle Actuel (Début 1772 in-game) :** Éveil d'Elara. Le continent insulaire devient une zone de confinement fermée, rongée par l'avancée entropique du Brouillard.
 
 ---
 
@@ -142,7 +144,7 @@ L'architecture géopolitique de Velnora est instable et sujette à un effondreme
 
 ### 5.3. Factions Transcendantes (Entités de la Singularité)
 - **Le Sanctuaire des Ossements :** Nécropole militarisée du Seigneur Liche Kazuki. Structure la plus stable, alimentée par la logique mathématique pure.
-- **Les Élus (Joueurs Isolés) :** Variables chaotiques. Individus possédant l'accès aux interfaces système, agissant comme mercenaires, tyrans ou victimes de haut niveau.
+- **Les Élus (Joueurs Isolés) :** Variables chaotiques. Individus déphasés possédant l'accès aux interfaces système, agissant comme mercenaires ou tyrans.
 - **La Voix de la Fortune :** Anomalie prédictive observant l'effondrement des variables, fournissant des données prophétiques sous forme d'énigmes.
 
 ### 5.4. Équilibre Dynamique (Triangle de Pouvoir)
@@ -155,12 +157,12 @@ L'architecture géopolitique de Velnora est instable et sujette à un effondreme
 
 ## 6. PROFILS DES PERSONNAGES NON-JOUEURS (PNJ)
 
-**Protagoniste : Elara Voss.** Entité joueuse réinitialisée. Son arc évolutif la fait transiter d'une posture de proie vulnérable à celle d'une anomalie prédatrice méthodique.
+**Protagoniste : Elara Voss.** Entité joueuse fraîchement déphasée. Son arc évolutif la fait transiter d'une posture de proie vulnérable à celle d'une anomalie prédatrice méthodique.
 
 **Figures de Puissance Majeures :**
-1. **Kazuki / Ainzuloth (L'Overlord) :** Administrateur d'alliance japonais transmuté en mort-vivant suprême. Rationalité absolue, analyse l'univers uniquement via des algorithmes statistiques. Mentor ou Némésis.
+1. **Kazuki / Ainzuloth (L'Overlord) :** Administrateur d'alliance japonais transmuté en mort-vivant suprême il y a 400 ans. Rationalité absolue, analyse l'univers uniquement via des algorithmes statistiques.
 2. **La Voix de la Fortune :** Entité non combattante, avatar d'analyse prédictive.
-3. **Capitaine Edward ("Le Dernier Navire") :** Opérateur logistique unique disposant d'un moyen d'exfiltration. Accès conditionné (Ressources critiques requises).
+3. **Capitaine Edward ("Le Dernier Navire") :** Opérateur logistique unique disposant d'un moyen d'exfiltration maritime.
 
 **Structures de Velnor :**
 4. **Rhea "Iron Bitch" Vossler :** Opératrice tactique impitoyable, valorise l'efficacité brute.
@@ -263,7 +265,7 @@ Gérés par l'orchestrateur serveur, ces événements forcent le joueur à s'ada
 ### 10.1. Routines Fréquentes (Génération Quotidienne)
 - **Incursions Nocturnes :** Apparition de 15 à 40 unités goblinoïdes en bordure urbaine. Risque d'altération définitive des PNJ (mort/capture).
 - **Expansion du Brouillard :** L'horloge macro-systémique. Modification asynchrone des chunks environnementaux (progression de 200 à 800m), appliquant un multiplicateur de statistiques aux entités corrompues locales.
-- **Ruptures Logistiques :** Événements d'émeute civile dans les zones de concentration de population, altérant les prix de l'économie locale.
+- **Ruptures Logistiques :** Événements d'émeute civile dans les zones de concentration de population, altérant les prix de l'économie locale gérée par IA.
 - **Opérations des Mercenaires :** Scripts de patrouille alliée croisant la trajectoire du joueur. Opportunités d'assistance tactique temporaire.
 - **Traque des Élus :** Escouades d'élimination ciblées spécifiquement sur le tag `is_player`, forçant une vigilance spatiale constante.
 
@@ -275,11 +277,11 @@ Gérés par l'orchestrateur serveur, ces événements forcent le joueur à s'ada
 - **Logistique du Sanctuaire :** Déplacement d'actifs sécurisés de l'Overlord traversant le continent.
 
 ### 10.3. Événements Majeurs (Modifications Structurelles de l'Univers)
-- **Ruptures Massives (Surge) :** Poussées brusques du Brouillard Noir instanciant des boss de haut niveau dans des zones précédemment sécurisées.
+- **Ruptures Massives (Surge) :** Poussées brusques du Brouillard Noir instanciant boss de haut niveau et instabilité systémique.
 - **Guerre de Factions :** Affrontement scripté entre tribus ennemies, permettant au joueur d'opérer des frappes chirurgicales sur les flancs.
-- **Insurrection Urbaine :** Perte temporaire ou définitive du contrôle de certains hubs urbains.
+- **Insurrection Urbaine :** Perte temporaire ou définitive du contrôle de certains hubs urbains, redéfinissant complètement l'économie de Velnor.
 - **Manifestation Écarlate :** Invocation d'avatars majeurs de la corruption par les sectateurs.
-- **Manœuvres de l'Overlord :** Opérations d'assimilation massive ou de destruction totale de certaines régions géographiques par les troupes squelettiques.
+- **Manœuvres de l'Overlord :** Opérations d'assimilation massive ou de destruction totale de certaines régions par les troupes squelettiques.
 
 ### 10.4. Traumatismes Personnels (Liés à l'État du Joueur)
 - **Rupture Cognitive (Flashback) :** En cas d'accumulation critique de la jauge de Trauma, perte de contrôle momentanée avec application d'un buff de dégâts incontrôlable.
@@ -352,7 +354,9 @@ Le backend Rust/Bevy s'interface avec le Model Context Protocol (MCP) pour simul
 - **Artéfacts Rares :** Objets systémiques d'une valeur inestimable, constituant la seule méthode d'outrepasser les protocoles de suppression définitive (mort permanente).
 - **Brouillard Noir (Black Mist) :** Vecteur de corruption entropique, résultante de l'anomalie de fusion entre la simulation *Eternal Realms* et l'univers physique.
 - **Classes Actives :** Voies de spécialisation remplaçant le modèle universel, permettant d'adopter des rôles asymétriques (Assassin, Thaumaturge corrompue) en fonction des variables de survie.
-- **Élus (Players) :** Entités humaines importées, marquées par le tag systémique `is_player`, leur conférant une courbe d'apprentissage et de puissance logarithmique accélérée.
+- **Déphasage Temporel (Time Dilation) :** Effet d'éclatement spatio-temporel survenu lors de la fusion ; les joueurs connectés en 2138 émergent à des époques différentes dans Velnora.
+- **Élus (Players) :** Entités humaines déphasées, marquées par le tag systémique `is_player`, leur conférant une courbe d'apprentissage et de puissance logarithmique accélérée.
+- **Enfant (L') :** Incarnation in-game de l'IA de l'Architecte, brisée en l'An 1771 en tentant de purger le système.
 - **MCP (Model Context Protocol) :** Interface de standardisation permettant l'ingestion du contexte de jeu (ECS Bevy) par des modèles de langage externes pour l'animation des PNJ.
 - **Renaissance Hybride (Rebirth) :** Sous-routine critique. Si le vecteur (joueur) est supprimé lors d'une période d'incubation forcée, le système génère un nouvel avatar au niveau 1 héritant de traits algorithmiques liés à l'espèce de l'agresseur.
 - **Velnora :** Espace confiné, dernier nœud de résistance humaine sur une topographie insulaire programmée pour la destruction.
