@@ -88,17 +88,17 @@ Le postulat de base est la souveraineté du serveur (Autorité Serveur). Cependa
 ```rust
 /// Paquet envoyé par le client au serveur
 #[derive(Serialize, Deserialize)]
-pub enum ClientMessage {
+pub enum ClientCommand {
     ActionRequest { action: ActionType, timestamp: u64 },
     MovementInput { direction: Vec2, timestamp: u64 },
 }
 
 /// Paquet envoyé par le serveur au client
 #[derive(Serialize, Deserialize)]
-pub enum ServerMessage {
+pub enum ServerResponse {
     ActionConfirmed { action_id: u64 },
     ActionDenied { reason: DenialReason, rollback_state: EntityState },
-    StateSnapshot { entity_id: Entity, state: EntityState, position: Vec3, server_tick: u64 },
+    StateSnapshot { entity_id: u64, state: EntityState, position: Vec3, server_tick: u64 },
 }
 ```
 

@@ -87,7 +87,7 @@ La sérialisation binaire via `bincode` (ou Protobuf) est imposée pour limiter 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum ClientCommand {
     /// Commande éphémère (Datagramme)
-    Movement { pos: (f32, f32, f32), yaw: f32, tick: u64 },
+    MovementInput { direction: bevy::math::Vec2, timestamp: u64 },
     /// Commande critique nécessitant validation (Stream)
     CastAbility { ability_id: u32, target_entity: Option<u64> },
     /// Interaction environnementale
@@ -97,7 +97,7 @@ pub enum ClientCommand {
 #[derive(Serialize, Deserialize, Debug)]
 pub enum ServerResponse {
     /// Delta de l'état du monde
-    StateDelta { entity_id: u64, new_pos: Option<(f32,f32,f32)>, state_flag: u8 },
+    StateSnapshot { entity_id: u64, state_flag: u8, position: bevy::math::Vec3, server_tick: u64 },
     /// Notification d'événement irréversible
     CombatResolution { attacker: u64, victim: u64, effect: u32, value: i32 },
     /// Validation d'un état critique (ex: Inventaire)
@@ -111,9 +111,9 @@ pub enum ServerResponse {
 
 La stratégie de gestion de la donnée sépare strictement les préoccupations transactionnelles, analytiques et sémantiques.
 
-### A. Base Transactionnelle : CockroachDB (NewSQL)
+### A. Base Transactionnelle : PostgreSQL (puis CockroachDB en cible Horizon 2030)
 
-Conçue pour un déploiement cloud-native avec réplication Raft, garantissant l'intégrité ACID sans Single Point of Failure (SPOF).
+En phase prototype et Alpha/Bêta, PostgreSQL garantit l'intégrité ACID. L'architecture ciblera CockroachDB (déploiement cloud-native avec réplication Raft) pour l'évolution Horizon 2030 sans Single Point of Failure (SPOF).
 L'usage systématique des `UUIDv7` garantit la triabilité temporelle, optimisant l'insertion concurrentielle dans des index B-Tree distribués. Le pooling de connexions (ex: `PgBouncer` ou gestionnaire natif) est obligatoire.
 
 **Schémas de Base (Exemple SQL DDL) :**
@@ -132,7 +132,7 @@ CREATE TABLE characters (
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(64) UNIQUE NOT NULL,
-    class_id INT NOT NULL,
+
     level INT DEFAULT 1,
     zone_id INT NOT NULL,
     coord_x FLOAT8, coord_y FLOAT8, coord_z FLOAT8,
@@ -168,7 +168,7 @@ L'authentification est décorrélée de l'infrastructure de jeu par un micro-ser
 
 Le système économique est le point le plus sensible aux exploitations (*dupe exploits*, attaques par rejeu). Il est architecturé comme un livre de comptes immuable (Ledger).
 
-*   **Isolation Stricte :** Le serveur de jeu utilise le niveau d'isolation `SERIALIZABLE` de CockroachDB pour toute mutation économique.
+*   **Isolation Stricte :** Le serveur de jeu utilise le niveau d'isolation `SERIALIZABLE` de PostgreSQL (et plus tard CockroachDB) pour toute mutation économique.
 *   **Idempotence :** Chaque requête transactionnelle émise par le client comporte un UUID de corrélation (`Idempotency-Key`). Si le serveur de jeu ou la DB constate que la clé a déjà été traitée, il ignore l'action, empêchant la duplication d'objets via le double clic ou la latence réseau.
 *   **Principe de la Double Entrée :** Toute création, destruction ou transfert de richesse nécessite un équilibrage à somme nulle. (ex: L'achat à un PNJ débite le joueur et crédite le compte global de la "Banque Centrale" du système).
 
@@ -226,15 +226,15 @@ Les agents IA ne possèdent en aucun cas un accès root ou une capacité d'exéc
 
 **Exemple d'outils (Tools) MCP mis à disposition :**
 *   `analyze_market_trend(item_category)` : Lecture seule.
-*   `spawn_entity(type: "Orc_Boss", coords: {x,y,z}, profile_id: Uuid)` : Nécessite des droits de "Maître de Jeu".
-*   `trigger_world_event(event_id: "Goblin_Raid", zone_id: 12)` : Action macro-scopique.
+*   `spawn_entity(type: "Mere_Arbre", coords: {x,y,z}, profile_id: Uuid)` : Nécessite des droits de "Maître de Jeu".
+*   `trigger_world_event(event_id: "Effare_Raid", zone_id: 12)` : Action macro-scopique.
 
 **Flux d'exécution sécurisé pour l'Agent IA :**
 1.  **Réflexion (RAG) :** L'agent IA détecte via ClickHouse qu'une zone est vide de monstres. Il interroge Qdrant pour connaître l'historique narratif de la zone.
 2.  **Action Planifiée :** L'agent génère une requête de l'outil MCP `trigger_world_event`.
 3.  **Validation Applicative (Gatekeeper) :** Le serveur de jeu reçoit la commande MCP. Il vérifie :
     *   La signature et les droits d'accréditation du token IA.
-    *   Les règles métier (ex: un *Goblin Raid* ne peut avoir lieu qu'une fois toutes les 6 heures, un délai qui est audité).
+    *   Les règles métier (ex: un *Effare Raid* ne peut avoir lieu qu'une fois toutes les 6 heures, un délai qui est audité).
 4.  **Exécution & Mutabilité :** Si validé, le composant ECS correspondant est muté, déclenchant le spawn des entités dans le cycle du moteur physique, qui sera ensuite propagé aux joueurs via des Deltas Réseau.
 5.  **Audit Log :** La décision IA, le prompt associé, et la commande résultante sont consignés immuablement en base de données pour permettre la traçabilité et le débogage (Audit Trail).
 

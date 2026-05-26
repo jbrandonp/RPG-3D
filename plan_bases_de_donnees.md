@@ -15,7 +15,7 @@ La persistance de l'univers s'articule autour des entités fondamentales suivant
 *   **`users`** : Gestion des comptes joueurs, de la sécurité et de l'authentification.
     *   *Colonnes suggérées* : `id` (UUID), `username`, `email`, `password_hash`, `created_at`, `last_login`, `status` (actif, banni).
 *   **`characters`** : Représentation des avatars en jeu, dépendants des utilisateurs.
-    *   *Colonnes suggérées* : `id` (UUID), `user_id` (FK), `name`, `level`, `experience`, `class_id`, `health`, `mana`, `gold`, `position_x`, `position_y`, `position_z`, `zone_id`.
+    *   *Colonnes suggérées* : `id` (UUID), `user_id` (FK), `name`, `level`, `experience`, `health`, `mana`, `gold`, `position_x`, `position_y`, `position_z`, `zone_id`.
 *   **`inventory_items`** : Enregistrement de tous les objets possédés ou équipés par les personnages.
     *   *Colonnes suggérées* : `id` (UUID), `character_id` (FK), `item_template_id`, `quantity`, `durability`, `is_equipped`, `slot_id`.
 *   **`quests_progress`** : Suivi asynchrone de l'état des quêtes pour chaque joueur.

@@ -39,7 +39,7 @@ Ce document définit les standards visuels et la direction artistique (Art Direc
 ## 3. Personnages (Héros et PNJ)
 
 ### 3.1 Anatomie et Proportions (Style "Heroic Proportion")
-- **Morphologie :** Proportions stylisées (ratio tête/corps de 1:7 ou 1:8). Épaules et mains légèrement surdimensionnées chez les classes martiales pour souligner la force ; silhouettes plus élancées et anguleuses pour les lanceurs de sorts.
+- **Morphologie :** Proportions stylisées (ratio tête/corps de 1:7 ou 1:8). Épaules et mains légèrement surdimensionnées chez les archétypes martiaux pour souligner la force ; silhouettes plus élancées et anguleuses pour les lanceurs de sorts.
 - **Visages & Expressions :** Traits anguleux inspirés de l'animation japonaise des années 2000. Yeux expressifs avec de forts contrastes d'iris.
 - **Chevelure :** Modélisée en "grappes" solides (pas de simulation de cheveux individuelle). Couleurs extravagantes et très saturées (Bleu Électrique, Rouge Feu, Blanc Pur) contrastant avec le reste de l'équipement.
 - **Animation :** Poses d'attente (Idle) respirantes et ancrées au sol, marquant un rythme cardiaque lent mais puissant.

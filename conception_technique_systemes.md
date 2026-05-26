@@ -119,7 +119,7 @@ L'inventaire n'existe fondamentalement pas côté client ; il n'y est qu'une pro
 
 ### Principes :
 1. **Vérité Déportée :** Le client demande la modification (ex: "Déplacer l'objet X vers l'emplacement Y").
-2. **Contrôle d'Intégrité :** Le serveur vérifie la propriété, le type d'objet, l'espace disponible et les règles de niveau/classe.
+2. **Contrôle d'Intégrité :** Le serveur vérifie la propriété, le type d'objet, l'espace disponible et les règles de niveau/statistiques.
 3. **Mutation d'État :** Si l'opération est légale, le serveur effectue le swap en mémoire ECS et envoie l'événement au service de persistance pour sauvegarder l'état atomiquement.
 4. **Réplication :** Le serveur renvoie le nouvel état complet (ou différé) de l'inventaire au client, qui met à jour l'interface graphique.
 
