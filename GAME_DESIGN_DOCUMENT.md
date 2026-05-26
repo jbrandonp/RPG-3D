@@ -1,77 +1,105 @@
-# Game Design Document (GDD) - Mini-MMO (Projet Horizon)
+# Document de Conception de Jeu (GDD) : Projet Horizon
 
-Ce document définit les règles, l'équilibre, la progression et les systèmes fondamentaux du jeu, en s'appuyant sur l'architecture Serveur/IA (Bevy/Rust) décrite dans le README.
+## 1. Introduction et Vision Globale
 
-## 1. Vision et Univers
+**Projet Horizon** est un MMORPG indépendant s'articulant autour d'un paradoxe volontaire : une direction artistique rétro et volontairement minimaliste couplée à une architecture backend d'une complexité et d'une modernité de pointe.
 
-**Thème :** Dark Fantasy et Médiéval Fantastique. L'ambiance visuelle et narrative varie selon les zones : des prairies ensoleillées et royaumes florissants (Médiéval Fantastique classique) aux marais corrompus, catacombes lugubres et terres désolées ravagées par la magie noire (Dark Fantasy).
-**Style Visuel :** Rétro, esthétique type "PlayStation 2" ou "Metin2". L'objectif est de garder un client très léger (le "client terminal") pour allouer la puissance de calcul aux systèmes d'intelligence artificielle et à un écosystème massivement multi-joueurs.
+L'objectif n'est pas d'offrir une claque graphique, mais de proposer un monde persistant, massif, dont les mécaniques de jeu, l'économie et la narration sont générées, régulées et adaptées dynamiquement par une architecture d'intelligence artificielle.
 
----
-
-## 2. Système de Combat (Hybride Action type Metin2)
-
-Le système de combat est viscéral, orienté action et gère de multiples ennemis simultanément.
-
-* **Attaques Multi-cibles (Cleave) :** Contrairement au "tab-targeting" classique, les attaques de base en mêlée touchent toutes les entités se trouvant dans un cône ou une zone devant le joueur. Un joueur peut ainsi combattre 5 ou 10 monstres en même temps.
-* **Mobilité et Kiting :** Le positionnement est crucial. Les joueurs doivent rassembler les monstres (pull) et frapper au bon moment pour optimiser les dégâts tout en évitant les encerclements fatals.
-* **Compétences Actives :** Les compétences déclenchent des effets de zone (AoE), des étourdissements ou des repoussements (knockbacks), essentiels pour contrôler les foules (crowd control).
-* **Serveur Autoritaire :** Le client prédit l'animation (ex: un coup d'épée), mais le serveur calcule mathématiquement l'impact et les dégâts réels en fonction des positions exactes pour éviter la triche.
+* **Thème :** Un monde de transition oscillant entre le Médiéval-Fantastique classique (zones de départ, capitales florissantes, plaines lumineuses) et la Dark Fantasy (zones contestées, terres corrompues, donjons abyssaux).
+* **Paradigme Technique :** Le "Client Terminal". Le jeu client (développé via Bevy en WGPU) est un simple afficheur, très peu gourmand en ressources, garantissant une compatibilité maximale (des PC de dernière génération aux configurations datant de 15 ans). L'intégralité de la logique métier, des calculs de collision et de l'équilibrage est opérée par un serveur autoritaire (Rust / Bevy ECS Headless).
 
 ---
 
-## 3. Boucles de Progression (Système "Sans Classe")
+## 2. Système de Combat : L'Action Hybride
 
-Il n'y a pas de sélection de classe stricte (Guerrier, Mage, etc.) à la création du personnage. Vous êtes ce que vous portez et ce que vous pratiquez.
+Le système de combat s'éloigne du ciblage statique ("Tab-targeting") pour proposer un gameplay dynamique, viscéral et orienté sur la gestion de groupes (inspiré des standards comme *Metin2*).
 
-* **Progression par l'Équipement et les Statistiques :** Le joueur distribue ses points d'attributs (Force, Dextérité, Intelligence, Vitalité). L'arme équipée définit le set de compétences disponible.
-* **Maîtrise d'Arme :** Utiliser une épée à deux mains augmente la "Maîtrise de l'Épée Lourde", débloquant progressivement de nouvelles compétences (tourbillons, brise-armure). Passer à un bâton magique donne accès à des sorts de feu ou de soin, mais nécessite de monter la "Maîtrise du Bâton".
-* **Arbre de Passifs Universel :** Les joueurs débloquent des points de talent permettant d'hybrider leur personnage (ex: un mage en armure lourde ou un assassin utilisant de la magie de sang).
+### 2.1. Mécaniques de Base
+* **Frappes Multi-Cibles (Cleave) :** Les attaques de mêlée possèdent de larges *hitboxes* coniques ou circulaires. Un joueur ne combat que très rarement un ennemi unique ; le système encourage le "pull" (rassemblement) de grappes d'ennemis (5 à 15 simultanément) pour maximiser l'efficacité.
+* **Mobilité et Kiting :** L'absence d'animation d'attaque verrouillée (Animation Lock) permet au joueur de se déplacer constamment ("Kiting"). Le positionnement est la compétence principale pour survivre.
+* **Serveur Autoritaire & Prédiction Locale :** Pour garantir la réactivité sans compromettre la sécurité, le client prédit l'impact visuel et sonore des attaques. Cependant, le serveur valide l'équation mathématique $S_{t} = S_{t-1} + \Delta t \times \Phi(S_{t-1}, I_{t})$ pour chaque entité. Aucun calcul de dégâts ou de mort ne provient du client.
 
----
-
-## 4. Métiers et Récolte
-
-L'artisanat est le moteur principal de la création d'équipement. Les meilleurs équipements ne "tombent" pas directement des monstres, ils sont fabriqués.
-
-* **Récolte (Gathering) :** Minage, Bûcheronnage, Herboristerie, Dépeçage. Les ressources ont différents tiers de rareté.
-* **Artisanat (Crafting) :** Forgeron, Tailleur, Alchimiste, Enchanteur. L'artisanat nécessite souvent l'interaction de plusieurs métiers (ex: le forgeron a besoin de cuir du dépeceur pour les poignées d'épées).
-* **Usure et Destruction :** Pour maintenir l'économie active, les objets ont une durabilité. L'amélioration d'équipement à haut niveau a un pourcentage d'échec pouvant entraîner la destruction de l'objet (ajoutant un risque/récompense intense).
+### 2.2. Crowd Control et Réactivité
+* **Compétences Actives :** Les compétences consomment de la ressource (Mana/Endurance) et appliquent des effets physiques : projection arrière (Knockback), étourdissement de zone (Stun), ou ralentissement (Snare). Ces effets sont essentiels pour briser l'encerclement.
 
 ---
 
-## 5. L'Économie gérée par l'IA
+## 3. Évolution et Progression : Le Système Organique "Sans Classe"
 
-L'économie n'est pas statique ; elle est régulée en temps réel par une Intelligence Artificielle (L'Agent Économique) fonctionnant via le Model Context Protocol (MCP) et l'analyse de données (ClickHouse).
+L'architecture rejette les archétypes rigides (Guerrier, Mage, Soigneur) choisis à la création du personnage. La fonction d'un joueur est dictée par ses choix d'équipement et ses investissements d'attributs.
 
-* **Régulation Dynamique :** L'IA analyse les stocks mondiaux. S'il y a trop de Fer dans le monde, l'IA baisse le prix d'achat par les PNJ marchands et réduit le taux d'apparition (spawn) des filons de fer. À l'inverse, si une ressource vient à manquer, l'IA génère des "pénuries" qui augmentent drastiquement les prix et incitent les joueurs à aller miner dans des zones dangereuses.
-* **Contrats Commerciaux :** Les PNJ (animés par des LLM) peuvent proposer des contrats commerciaux dynamiques selon les besoins de leur village (ex: "La milice manque de flèches, le prix de rachat du bois double pendant 4 heures").
-* **Marché Global ou Local :** Les hôtels de vente (ou places marchandes) sont taxés dynamiquement selon l'inflation du serveur.
+### 3.1. Attributs Fondamentaux
+Chaque niveau octroie des points à répartir librement :
+* **Force (STR) :** Augmente les dégâts physiques bruts et la capacité de charge de l'inventaire.
+* **Dextérité (DEX) :** Améliore la vitesse d'attaque, les chances d'esquive et les dégâts des armes à distance.
+* **Intelligence (INT) :** Détermine la puissance magique, la réserve de Mana et la résistance aux altérations d'état.
+* **Vitalité (VIT) :** Définit le pool de points de vie (HP) et la régénération hors combat.
 
----
-
-## 6. L'Impact du PvP sur l'Économie
-
-Le PvP n'est pas juste un affrontement pour la gloire, il est le principal levier économique à haut niveau.
-
-* **Contrôle de Territoire (Guildes/Factions) :** Les guildes peuvent revendiquer certains territoires ou châteaux. Posséder un territoire permet à la guilde de prélever des taxes sur toutes les transactions marchandes ou ressources récoltées dans cette zone.
-* **Mines et Zones de Récolte Contestées :** Les ressources les plus rares du jeu se trouvent exclusivement dans des zones "Open PvP" (PVP ouvert). Pour récolter du minerai mythique, une guilde doit escorter ses mineurs et défendre la zone contre les autres guildes.
-* **Caravanes Marchandes :** Pour transporter d'énormes quantités de marchandises d'une ville à une autre (pour profiter des différences de prix générées par l'IA), les joueurs peuvent organiser des caravanes lourdement chargées. Celles-ci peuvent être attaquées et pillées par d'autres joueurs.
+### 3.2. Maîtrises d'Armes et Synergies
+* **Apprentissage par l'usage :** Utiliser une arme (ex: Épée à deux mains) génère de l'expérience spécifique pour cette maîtrise. Franchir des paliers de maîtrise débloque les compétences actives associées à cette arme.
+* **Hybridation :** Un joueur ayant investi en Intelligence (INT) mais s'équipant d'une armure lourde (Nécessitant de la Force) créera de facto un "Battlemage". Le système récompense les *builds* spécialisés (Glass Cannon) comme les *builds* utilitaires.
 
 ---
 
-## 7. Quêtes et Intégration IA des PNJ
+## 4. Écosystème Économique et Artisanat
 
-Fini les PNJ statiques avec des points d'exclamation jaunes qui répètent la même phrase depuis 10 ans.
+L'économie du jeu se veut réaliste, impitoyable et totalement dépendante des joueurs. Le butin (Loot) des monstres fournit des matières premières, pas les meilleurs équipements.
 
-* **Mémoire Sémantique (RAG) :** Les PNJ majeurs utilisent une base de données vectorielle pour se "souvenir" de leurs interactions passées avec les joueurs ou l'état du monde. (ex: Un garde se souviendra que vous avez aidé le village à repousser une invasion d'orcs la semaine passée).
-* **Quêtes Dynamiques (LLM) :** L'IA Générative crée des événements et des quêtes en direct. Si les loups d'une forêt se reproduisent trop vite (donnée remontée par le serveur de simulation), le chef du village générera une quête d'extermination de loups pour les joueurs locaux, avec des dialogues uniques et contextuels.
-* **Réputation Organique :** Trahir un PNJ ou échouer une quête majeure modifie la perception de la faction entière envers le joueur. Les dialogues générés par l'IA s'adapteront à cette réputation (ton méfiant, prix augmentés).
+### 4.1. Récolte et Artisanat Interdépendant
+* Les ressources sont divisées en Tiers de rareté.
+* Les métiers de transformation (Forge, Couture, Alchimie) dépendent intrinsèquement des métiers de récolte (Minage, Dépeçage, Herboristerie).
+* L'artisanat de haut niveau nécessite des composants croisés, forçant la coopération ou le commerce entre artisans spécialisés.
+
+### 4.2. Usure, Durabilité et Destruction (Risk/Reward)
+* **Économie de consommation :** Tous les équipements perdent en durabilité lors des combats et des morts.
+* **Amélioration risquée :** Le système de perfectionnement des objets (ex: de +1 à +9) intègre des probabilités de réussite décroissantes. À partir d'un certain palier, un échec n'entraîne pas seulement la perte des matériaux, mais la **destruction définitive de l'objet**. Ce mécanisme crée une demande constante et endigue l'inflation des équipements "Parfaits".
 
 ---
 
-## 8. Résumé de l'Équilibre Général
+## 5. Régulation Économique par Intelligence Artificielle
 
-* **Risque vs Récompense :** Plus une zone est dangereuse (présence de monstres forts ou de joueurs ennemis PvP), plus les ressources et le butin y sont lucratifs.
-* **Rôle de l'IA :** L'IA n'est pas un gimmick textuel. Elle agit comme le Maître du Donjon qui s'assure que le monde est vivant, que l'économie ne s'effondre ni par l'hyperinflation ni par la pénurie, et que l'histoire du serveur s'écrit organiquement avec les actions des joueurs.
-* **Philosophie de Conception :** Garder le gameplay de cœur viscéral (taper des monstres, récolter) extrêmement fun et fluide, tout en entourant le joueur d'un macro-système complexe, social et impitoyable.
+L'innovation majeure réside dans le pilotage macro-économique par une IA (Agent Économique via protocole MCP et base de données ClickHouse).
+
+### 5.1. La Main Invisible du Serveur
+* **Analyse en Temps Réel :** L'Agent Économique monitore la masse monétaire, les stocks en hôtels de vente, et le volume de ressources généré.
+* **Ajustement Dynamique de l'Offre :** Si l'IA détecte une surproduction d'un minerai (ex: Or), elle réduit dynamiquement son taux de *spawn* géographique et augmente les taxes de transaction sur cette ressource.
+* **Création de Pénuries :** Pour dynamiser certaines régions, l'IA peut provoquer intentionnellement des pénuries (ex: baisse drastique de la récupération de cuir). Les PNJ marchands générés par LLM proposeront alors des contrats extrêmement lucratifs (quêtes publiques temporaires) pour cette ressource spécifique.
+
+---
+
+## 6. L'Impact Macro-économique du Joueur contre Joueur (PvP)
+
+Le PvP est le moteur end-game. Il justifie l'artisanat, la progression, et dynamise l'économie.
+
+### 6.1. Territoires et Taxes
+* **Contrôle de Zone :** Les guildes peuvent revendiquer des forteresses ou des relais marchands. La guilde souveraine fixe et prélève un pourcentage de taxe sur l'ensemble des hôtels de vente et PNJ de sa région.
+* **Guerre de Factions :** Des guerres planifiées permettent le siège de ces forteresses.
+
+### 6.2. Monopole des Ressources (Open PvP)
+* Les minerais de Tiers maximum ou les herbes mythiques n'apparaissent que dans des zones contestées. Ces zones imposent un statut "PvP Ouvert". Pour exploiter ces ressources, une guilde doit sécuriser la zone, escortant ses récolteurs et repoussant les factions adverses.
+
+### 6.3. Le Système de Caravanes
+* Les hôtels de vente sont locaux (spécifiques à une ville). Le prix du Fer peut être dérisoire à la capitale minière, mais très élevé dans la capitale elfique.
+* **Arbitrage Commercial :** Les joueurs peuvent créer des caravanes pour transporter de grands volumes. Celles-ci sont des cibles légitimes en zone contestée. La protection d'une caravane (ou son pillage) est une activité PvP hautement rémunératrice.
+
+---
+
+## 7. IA Sémantique : Des PNJ et Quêtes Vivants
+
+L'univers abandonne les interactions statiques au profit de modèles génératifs contrôlés et gardés dans un cadre strict par le serveur.
+
+### 7.1. Mémoire Sémantique (Système RAG)
+* Les PNJ majeurs utilisent une base de données vectorielle (Qdrant/Milvus) pour stocker leurs "souvenirs". La Similarité Cosinus permet à un PNJ de se rappeler des actes du joueur (ex: "Vous avez tué le chef bandit il y a 3 jours") et d'adapter ses lignes de dialogues et ses prix de manière organique.
+
+### 7.2. Quêtes Générées Procéduralement par IA
+* Plutôt que des séries de quêtes figées, le monde génère des événements basés sur la simulation. Si les données montrent qu'une guilde a décimé trop de cerfs dans la forêt de l'Est, la chaîne alimentaire simulée se brise : l'IA génère des quêtes pour contrer l'invasion de loups affamés qui se rabattent sur le village.
+* Ces quêtes sont traduites en dialogues narratifs uniques par les LLM, offrant une expérience renouvelée à chaque cycle économique.
+
+---
+
+## 8. Résumé des Boucles d'Engagement
+
+1. **Boucle Court-terme (La Minute) :** Un système de combat action nerveux, exigeant un bon placement et permettant la satisfaction de vaincre des hordes d'ennemis.
+2. **Boucle Moyen-terme (L'Heure) :** Retour en ville, sécurisation de l'inventaire, utilisation du système d'artisanat, et arbitrage commercial pour optimiser ses ressources en surveillant les fluctuations de l'IA.
+3. **Boucle Long-terme (La Semaine/Le Mois) :** Implication sociale, politique et militaire. Sécurisation de monopoles économiques dans les zones PvP, prise de territoires avec la guilde, et maîtrise approfondie des armes et statistiques du personnage.
