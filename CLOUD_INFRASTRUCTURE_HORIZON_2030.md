@@ -102,3 +102,68 @@ Une architecture intégrant des agents IA requiert une sécurité de type *Zero 
     *   Les modèles IA utilisent le protocole **MCP (Model Context Protocol)** pour s'interfacer avec le moteur de jeu.
     *   *Principe de validation forte :* Les intentions générées par l'IA (transferts d'objets, altérations du monde) sont systématiquement validées par la logique autoritaire (Rust) du serveur Bevy. L'IA ne possède aucune permission d'écriture directe en base de données.
 *   **Pipeline DevSecOps :** Scan continu des images Docker (Trivy), analyse statique de code (SAST), et vérification de la configuration Kubernetes (Checkov) intégrés au CI/CD.
+
+---
+
+## 8. Plan d'Action Global (Roadmap sur 6 mois)
+
+L'objectif de ce plan de 6 mois est de poser les fondations de l'architecture "Horizon 2030" en passant du prototype à une infrastructure Cloud-Native prête pour l'intégration de la logique de jeu et de l'IA.
+
+### Mois 1 : Fondations Réseau et Infrastructure as Code (IaC)
+- Choix du fournisseur Cloud et initialisation des comptes.
+- Mise en place du dépôt GitOps (IaC via Terraform/OpenTofu).
+- Configuration du Virtual Private Cloud (VPC), sous-réseaux (Public/Private/Data), et NAT Gateways.
+- Déploiement du premier cluster Kubernetes (K8s) basique dans une région unique.
+
+### Mois 2 : Orchestration et Serveurs de Jeu (Compute)
+- Installation et configuration d'**Agones** sur le cluster Kubernetes.
+- Déploiement d'une image Docker basique du serveur Headless Bevy.
+- Configuration du registre d'images de conteneurs (Container Registry).
+- Tests de création, d'allocation et de destruction de *GameServers* via Agones.
+
+### Mois 3 : Couche de Persistance Initiale (Base de Données)
+- Déploiement du cluster **CockroachDB** (Single Region) dans les sous-réseaux Data.
+- Configuration de l'accès sécurisé depuis les pods Kubernetes vers la base de données.
+- Implémentation des sauvegardes automatisées (S3) et tests de restauration (PITR).
+
+### Mois 4 : Observabilité et Monitoring
+- Déploiement de la stack d'observabilité : **Prometheus** et **Grafana**.
+- Configuration des agents **OpenTelemetry** sur le serveur Bevy.
+- Création des premiers dashboards (utilisation CPU/RAM, nombre d'entités, connexions actives).
+- Configuration des alertes critiques (PagerDuty/Slack).
+
+### Mois 5 : Architecture IA et Mémoire Sémantique
+- Déploiement de la base vectorielle **Qdrant/Milvus** dans les sous-réseaux Data.
+- Création de l'AI API Gateway (ex: LiteLLM) sur Kubernetes.
+- Implémentation du protocole **MCP** côté serveur Bevy pour l'interface avec les LLMs.
+
+### Mois 6 : Sécurité, Réseau Edge et HA (Haute Disponibilité)
+- Déploiement du Service Mesh (Istio/Linkerd) pour le mTLS inter-services.
+- Intégration de HashiCorp Vault pour la gestion des secrets dynamiques.
+- Configuration du CDN (Cloudflare), WAF, et Global Load Balancing.
+- Tests de Chaos Engineering (simulation de perte d'un nœud, d'une base de données).
+
+---
+
+## 9. Sprint 1 : Initialisation de l'Infrastructure as Code et Réseau
+
+**Durée du Sprint :** 2 semaines
+**Objectif :** Disposer d'un dépôt IaC structuré déployant automatiquement le socle réseau (VPC) et un cluster Kubernetes vierge et sécurisé dans une région cible.
+
+### Backlog du Sprint 1
+
+*   **Tâche 1.1 : Initialisation du dépôt Infrastructure (IaC)**
+    *   *Description :* Créer un nouveau dépôt Git dédié à l'infrastructure.
+    *   *Action :* Configurer Terraform/OpenTofu avec un backend distant sécurisé (ex: bucket S3 + DynamoDB pour le lock) pour la gestion du state.
+*   **Tâche 1.2 : Architecture du Réseau (VPC)**
+    *   *Description :* Écrire le code Terraform pour la topologie réseau de base.
+    *   *Action :* Créer un VPC avec 3 types de sous-réseaux (Public, Compute Private, Data Private) répartis sur au moins 2 Zones de Disponibilité (AZ). Configurer les NAT Gateways pour l'accès internet sortant des sous-réseaux privés.
+*   **Tâche 1.3 : Déploiement du Cluster Kubernetes (K8s)**
+    *   *Description :* Instancier l'orchestrateur qui hébergera nos services.
+    *   *Action :* Déployer un cluster K8s managé (EKS/GKE/AKS ou équivalent Terraform) dans les sous-réseaux *Compute Private*. Activer les logs d'audit du cluster.
+*   **Tâche 1.4 : Configuration de la CI/CD basique (GitOps)**
+    *   *Description :* Automatiser les tests de l'infrastructure.
+    *   *Action :* Mettre en place un workflow GitHub Actions (ou GitLab CI) exécutant `terraform plan` sur les Pull Requests pour valider la syntaxe et l'intention de déploiement avant fusion.
+*   **Tâche 1.5 : Documentation de l'Infrastructure**
+    *   *Description :* Maintenir la connaissance technique.
+    *   *Action :* Rédiger un README.md dans le dépôt d'infrastructure détaillant comment s'authentifier au fournisseur Cloud, comment initialiser Terraform, et comment se connecter au cluster Kubernetes (kubeconfig).
