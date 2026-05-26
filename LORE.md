@@ -4,7 +4,7 @@
 | :--- | :--- |
 | **Projet** | ELARA'S BLACK MIST |
 | **Statut** | Document de Travail (WIP) |
-| **Version** | 3.2.0 |
+| **Version** | 3.3.0 |
 | **Périmètre** | Prototype (Pré-Alpha) & Vision étendue (Horizon 2030) |
 
 > **Avertissement :** Ce document est le point de référence central pour la direction narrative, la conception des personnages, la structure des quêtes et l'intégration des systèmes d'intelligence artificielle (MCP). Toute modification de l'univers de jeu doit être documentée ici pour assurer la cohérence entre le gameplay, la technique et l'histoire.
@@ -23,7 +23,7 @@
 8. [Architecture des Quêtes](#8-architecture-des-quêtes)
 9. [Ingénierie des Dialogues et Scripting](#9-ingénierie-des-dialogues-et-scripting)
 10. [Systèmes d'Événements Dynamiques](#10-systèmes-dévénements-dynamiques)
-11. [Direction Cinématographique](#11-direction-cinématographique)
+11. [Direction Audio-Visuelle et Cinématographique](#11-direction-audio-visuelle-et-cinématographique)
 12. [Spécifications Techniques IA (Horizon 2030)](#12-spécifications-techniques-ia-horizon-2030)
 13. [Glossaire Technique et Narratif](#13-glossaire-technique-et-narratif)
 
@@ -32,310 +32,309 @@
 ## 1. VISION NARRATIVE ET PRINCIPES DE CONCEPTION
 
 ### 1.1. Logline du Projet
-> *« L'histoire est racontée comme un cauchemar réaliste et interactif où un jeu vidéo est devenu une prison mortelle et un enfer médiéval. L'espoir est une illusion. »*
+> *« L'histoire est racontée comme un cauchemar réaliste et interactif où un monde virtuel immersif est devenu une prison mortelle et un purgatoire oppressant. L'espoir est une illusion systémique. »*
 
 ### 1.2. Ton et Atmosphère
-Le ton principal est **nihiliste, cru, oppressant et désespéré**, avec des moments très rares de beauté ou d’espoir qui sont immédiatement brisés. C’est un mélange viscéral entre la vulnérabilité extrême, la brutalité obsessionnelle, la solitude existentielle et l’ascension sombre. Le monde lui-même semble vivant et hostile. Le viol, la trahison, la souffrance et la mort sont courants. Mais il y a une mince couche de "game mechanics" (notifications RPG) qui donne un faux sentiment de contrôle.
+Le ton principal est **nihiliste, cru, oppressant et désespéré**, avec des moments très rares de grâce qui sont inévitablement brisés. C'est une exploration viscérale de la vulnérabilité extrême face à une brutalité obsessionnelle. Le monde lui-même semble conscient et hostile. L'oppression, la trahison, la souffrance psychologique et physique sont les fondations du gameplay. Toutefois, une fine couche de mécaniques de jeu (notifications système, interface) maintient chez le joueur un faux sentiment de contrôle.
 
 ### 1.3. Point de Vue et Style
-- **Point de Vue (POV) :** Troisième personne limitée, strictement collée à **Elara Voss**.
-- **Style d'Écriture :** Cru, direct. Phrases courtes et percutantes dans l'action. Descriptions longues et sensorielles pour la souffrance ou l'environnement (odeur du sang, sensation du Brouillard Noir). Pas de métaphores fleuries.
-- **Narration Technique :** Utilisation occasionnelle de mécaniques de jeu (ex. : *« Niveau 7 atteint. Compétence [Résistance à la Douleur] débloquée. »*) pour rappeler que c'est un ancien jeu. Ces notifications deviennent de plus en plus froides et ironiques.
+- **Point de Vue (POV) :** Troisième personne limitée, ancrée dans la perception d'**Elara Voss**.
+- **Style d'Écriture :** Clinique et direct. Les descriptions s'attardent sur les détails sensoriels (odeur de putréfaction, froid surnaturel du Brouillard Noir) sans fioritures romantiques.
+- **Narration Technique :** L'intrusion occasionnelle de la réalité virtuelle (ex. : *« Niveau 7 atteint. Compétence [Résistance à la Douleur] débloquée. »*) agit comme une dissonance cognitive, rappelant l'origine artificielle de cet enfer.
 
 ### 1.4. Thèmes Majeurs
-- L’impuissance face à un monde cruel.
-- La transformation : comment une fille fragile devient monstrueuse pour survivre.
-- Le prix du pouvoir.
-- Le traumatisme et la vengeance obsessionnelle.
-- La fausse nature des jeux vidéo : ce qui était "juste un jeu" est réel.
-- Vaut-il mieux fuir ou dominer un monde pourri ?
+- **Impuissance et Transformation :** L'évolution contrainte d'une entité vulnérable vers une force monstrueuse et pragmatique.
+- **Prix du Pouvoir :** L'ascension hiérarchique nécessite l'abandon progressif de l'humanité.
+- **Dissonance Ludique :** Les règles d'un ancien environnement contrôlé s'appliquent avec une rigidité implacable dans une réalité devenue organique et chaotique.
+- **Illusion du Choix :** Fuir, survivre ou dominer dans un monde fondamentalement condamné.
 
 ---
 
 ## 2. STRUCTURE DU RÉCIT (PLAN EN ARCS)
 
-**Arc 0 – Prologue (Inciting Incident)**
-Elara se connecte pour une dernière session à *Eternal Realms*. Fusion du monde. Elle se réveille nue/faible dans les ruines de Syphralis, fuyant le Brouillard Noir avec des milliers de réfugiés vers Velnor. Première rencontre traumatisante avec des Goblinoïds. Première mort et humiliation.
+**Arc 0 – Prologue (L'Incidence de Rupture)**
+Elara initie une ultime connexion au réseau d'*Eternal Realms*. Rupture systémique et fusion ontologique. Elle s'éveille sans ressources ni protection dans les vestiges de Syphralis. Poursuivie par les entités du Brouillard Noir, elle rejoint le flux massif de réfugiés fuyant vers Velnor. Premier contact létal avec les Goblinoïds.
 
-**Arc 1 – La Survie en Ville (La Proie)**
-Arrivée à Velnor : surpeuplée, famine, gangs, prostitution, esclavage. Focus sur la survie quotidienne : quêtes bas niveau, prostitution forcée ou choisie, petits boulots dangereux. Rencontres avec Big Mama, Cocona, le Capitaine Edward.
+**Arc 1 – La Survie en Ville (État de Proie)**
+Arrivée à Velnor, une métropole engorgée, rongée par la famine et dominée par les syndicats criminels. Focus sur la subsistance : accomplissement de tâches mineures, compromissions morales, et exploitation pour survivre. Établissement de connexions fragiles avec des figures locales (Griselda, Cocona, Capitaine Edward).
 
-**Arc 2 – La Chasse aux Gobelins (La Chasseresse)**
-Elara développe une haine viscérale après un viol/gangbang par des goblins. Elle bascule et devient obsédée par l'extermination des nids de Goblinoïds (pièges, poison, feu).
+**Arc 2 – L'Extermination (Transition Prédatrice)**
+Suite à un traumatisme sévère orchestré par un raid Goblinoïd, la psyché d'Elara se fragmente. Elle développe une focalisation obsessionnelle sur l'éradication des nids. Formation d'une escouade spécialisée s'appuyant sur des tactiques de guerre asymétrique (ingénierie mortelle, toxines, incendies tactiques).
 
-**Arc 3 – L’Ascension**
-Elle accumule du pouvoir et gagne des niveaux grâce à son statut de "Player". Découverte que l'Overlord Ainz-like (Kazuki) règne sur le centre de l'île. Choix : s'allier, manipuler, confronter, ou devenir elle-même une Dark Lady.
+**Arc 3 – L’Ascension (Gouvernance et Alliances)**
+L'accumulation rapide d'expérience, favorisée par son statut "d'Élue" (ancien joueur), attire l'attention des puissances majeures. Découverte du Sanctuaire des Ossements et de son monarque, le Seigneur Liche Kazuki. Évaluation des trajectoires : subordination, machiavélisme, affrontement direct, ou élévation au rang de Souveraine Sombre.
 
-**Arc 4 – La Guerre de l’Île (La Souveraine ou la Fugitive)**
-Invasion massive des Goblinoïds, Deep Ones et Abominations. Siège de Velnor. Elara doit choisir : fuir égoïstement, sauver des gens, ou conquérir l'île.
+**Arc 4 – La Guerre d'Attrition (Guerre Totale)**
+Convergence des forces antagonistes majeures (Goblinoïds, Deep Ones, Entités de la Déesse Écarlate) aboutissant au siège de Velnor. Elara fait face au dilemme terminal : exode personnel, défense désespérée des vestiges humains, ou conquête martiale de l'île.
 
-**Arc 5 – Climax & Endings**
-Multiples fins amères :
-- **Fuite "heureuse" :** Elle s'échappe, mais l'île chute totalement.
-- **Bad Ends :** Esclave éternelle, morte en couche, transformée en abomination.
-- **Overlord End :** Elle devient la souveraine sombre.
-- **Sacrifice End :** Détruit le cœur du Brouillard Noir mais meurt.
-- **Goblin Slayer End :** Passe sa vie à tuer des goblins, brisée à jamais.
+**Arc 5 – Terminaisons Multiples**
+- **L'Exode Illusoire :** Fuite réussie via les voies maritimes, accompagnée de l'effondrement total de Velnora.
+- **Terminaisons Fatales :** Asservissement perpétuel, assimilation par le Brouillard, ou mort organique irréversible.
+- **L'Hégémonie Sombre :** Élévation au statut de Souveraine absolue de l'île.
+- **L'Annihilation Mutuelle :** Destruction du noyau du Brouillard Noir au prix de sa propre existence.
+- **La Croisade Infinie :** Survie dédiée exclusivement à la purification violente et sans fin, menant à une fracture psychologique irréversible.
 
 ---
 
 ## 3. COSMOGONIE ET CHRONOLOGIE UNIVERSELLE
 
 ### 3.1. Entités Primordiales
-Du Vide Éternel naquirent trois entités :
-1. **Justice (Le Dieu Mort) :** Créateur des lois physiques et de la réalité. Endormi ou mort. Il créa les Deep Ones et les humains.
-2. **The Crimson Mother :** Déesse de la fertilité corrompue, de la chair et de la folie. Mère des Goblinoïds et abominations.
-3. **The Architect :** Force abstraite représentant l'ordre, créateur du VRMMO *Eternal Realms* des millénaires plus tard.
+Du Vide Éternel (The Eternal Void) émergèrent trois concepts directeurs :
+1. **La Justice (L'Ordonnateur Défunt) :** Créateur originel des constantes physiques et concepteur des entités océaniques primaires (Deep Ones) ainsi que de l'humanité. Actuellement dormant ou anéanti.
+2. **La Mère Écarlate (The Crimson Mother) :** Avatar de la prolifération charnelle incontrôlée et de la corruption organique. Génitrice des espèces prédatrices (Goblinoïds) et des abominations mutagènes.
+3. **L'Architecte (Le Concepteur Système) :** Entité représentant les protocoles, les règles logiques et les algorithmes de la simulation virtuelle *Eternal Realms*.
 
-### 3.2. Chronologie Universelle
-- **Ère Primordiale (An 0 – 800) :** Création. La Crimson Mother répand ses enfants (Goblinoïds). Guerre Deep Ones vs Abominations.
-- **Ère des Saints (An 1321 – 1500) :** Apparition des Six Saints. Fondation de Syphralis.
-- **Ère de la Colonisation (An 1550 – 1700) :** Colons d'Ingeland. Victoire sur les Deep Ones grâce à un héros légendaire ("Leroy Jenkins"). Fondation de Velnor.
-- **Ère du Brouillard (An 1771 – Aujourd'hui) :** La Crimson Mother trébuche face à "l'Enfant". Destruction de Syphralis. Naissance officielle du **Brouillard Noir**.
-- **Ère des Joueurs (An 2138 / Fusion) :** Fin d'Eternal Realms. Le jeu fusionne avec la réalité. Kazuki devient le Lich Overlord.
-- **Début 1772 :** Elara se réveille niveau 1. Le Brouillard s'étend. L'île est un piège mortel.
+### 3.2. Chronologie Systémique
+- **Ère Primordiale (An 0 – 800) :** Établissement des espèces. Prolifération des descendants de la Mère Écarlate. Conflit territorial entre les Deep Ones et les entités mutagènes.
+- **Ère des Saints (An 1321 – 1500) :** Manifestation de six figures fondatrices (Porteurs de reliques transcendantes). Établissement de la cité de Syphralis.
+- **Ère de la Colonisation (An 1550 – 1700) :** Arrivée des colons d'Ingeland. Conflits maritimes majeurs et refoulement des Deep Ones. Fondation de la capitale Velnor.
+- **Ère du Brouillard (An 1771 – Présent) :** Échec d'une manifestation cataclysmique de la Mère Écarlate, provoquant l'oblitération de Syphralis et l'émergence exponentielle du **Brouillard Noir**.
+- **La Singularité (An 2138 / Fin d'Eternal Realms) :** Colapsus et fusion des protocoles virtuels avec la trame du monde physique. Les derniers connectés, dont Kazuki, deviennent des "Élus" dotés d'attributs para-physiques.
+- **Cycle Actuel (1772 in-game) :** Éveil d'Elara. Le continent insulaire devient une zone de confinement fermée, rongée par l'avancée entropique du Brouillard.
 
 ---
 
 ## 4. TOPOGRAPHIE ET LEVEL DESIGN NARRATIF
 
-L’île de **Velnora** (180x90 km) ressemble à une main brisée. Le Brouillard Noir agit comme une **horloge narrative**, progressant et forçant Elara à avancer.
+L’île de **Velnora** (180x90 km) présente la morphologie d'une main fracturée. Le Brouillard Noir fonctionne comme une **limite de zone temporelle** (Timer Asynchrone), consumant progressivement les secteurs sécurisés.
 
 ### 4.1. Carte de l'Île
-- **Nord-Est :** Syphralis (Ruines Écarlates), Cradle of the Crimson Mother. (Point zéro, danger extrême).
-- **Centre :** Sanctuaire des Ossements (Kazuki), Forêt des Murmures (Goblinoïds).
-- **Ouest / Sud-Ouest :** Velnor (Slums, Docks, Merchant District, Noble Quarter), Plaines et Falaises d'Argent.
-- **Sud :** Port de l'Exil (Captain Edward), Marais Putrides.
-- **Est :** Montagnes Brisées (Orcs, Hobgoblins).
+- **Nord-Est :** Syphralis (Ruines Écarlates). Épicentre de l'anomalie, danger terminal.
+- **Centre :** Sanctuaire des Ossements (domaine de l'Overlord), Forêt des Murmures (zones de reproduction Goblinoïds).
+- **Ouest / Sud-Ouest :** Velnor (Secteur des Docks, Bidonvilles, Quartier Marchand, Enclave Noble), Plaines agricoles et Falaises d'Argent.
+- **Sud :** Port de l'Exil (Zone d'extraction sous l'égide du Capitaine Edward), Marais Putrides.
+- **Est :** Montagnes Brisées (Fortifications Orcs, réseaux de grottes).
 
-### 4.2. Level Design Narratif
-| Zone | Niveau | Danger | Contenu Narratif / Monstres |
+### 4.2. Matrice de Progression (Level Design Narratif)
+| Zone | Paramètres de Complexité (Lvl) | Indice de Danger | Composantes Narratives & Entités Hôtes |
 | :--- | :--- | :--- | :--- |
-| **Velnor (Slums & Docks)** | 1–10 | Faible/Moyen | Survie urbaine, petits jobs. *Bandits humains, rats géants, goblins isolés.* |
-| **Plaines & Marais** | 8–18 | Moyen | Transition & premiers traumatismes. *Meutes de goblins, loups mutants.* |
-| **Forêt des Murmures** | 15–30 | Élevé | Arc "Goblin Slayer", nids. *Goblinoïds, araignées, plantes.* |
-| **Montagnes Brisées** | 25–40 | Très élevé | Ascension, artefacts. *Orcs organisés, trolls, cultistes.* |
-| **Falaises d'Argent** | 30-50 | Très élevé | Quêtes marines, artefacts. *Deep Ones, monstres aquatiques.* |
-| **Syphralis Ruines** | 35–55 | Extrême | Climax lovecraftien, cœur du Brouillard. *Abominations, boss eldritch.* |
-| **Sanctuaire des Ossements**| 40+ | Variable | Forteresse de l'Overlord. Alliances, trahisons. *Non-morts, joueurs.* |
+| **Velnor (Bidonvilles & Docks)** | 1–10 | Faible/Moyen | Gestion de la survie, économie de subsistance. *Rats géants, pillards, éclaireurs goblins.* |
+| **Plaines & Marais** | 8–18 | Moyen | Acquisition de compétences martiales primaires. *Patrouilles goblines, canidés corrompus.* |
+| **Forêt des Murmures** | 15–30 | Élevé | Assauts stratégiques sur les structures de reproduction (Nids). *Goblinoïds supérieurs, arachnides géantes.* |
+| **Montagnes Brisées** | 25–40 | Très élevé | Collecte de ressources critiques, artefacts. *Infanterie lourde Orc, Trolls, Sectateurs.* |
+| **Falaises d'Argent** | 30-50 | Très élevé | Exploration sous-marine. *Civilisation des Deep Ones, Faune abyssale.* |
+| **Syphralis Ruines** | 35–55 | Extrême | Cœur de la mutation. *Abominations majeures, entités cauchemardesques primordiales.* |
+| **Sanctuaire des Ossements**| 40+ | Variable | Nœud diplomatique et tactique. *Garde squelettique d'élite, joueurs vétérans.* |
 
-### 4.3. Principes de Level Design Narratif
-1. **Progression Organique :** Pas de grind libre. Chaque zone exige un coût narratif (traumatisme, perte d'humanité).
-2. **Boucle de Feedback :** Plus elle tue, plus elle gagne en puissance, mais plus elle attire l'attention du Brouillard.
-3. **Zones "Instanciées" :** Les nids ou grottes fonctionnent comme des donjons multi-étages avec boss.
-4. **Safe Zones :** Très rares. Velnor est dangereuse la nuit. Le Sanctuaire l'est si on n'est pas utile à Kazuki.
-5. **Évolution Visuelle :** L'apparence d'Elara change en s'enfonçant dans le Brouillard (peau pâle, yeux rouges).
-6. **Rebirth Zones :** Mort en couche = réapparition dans une zone aléatoire avec des traits hybrides.
+### 4.3. Principes Algorithmiques du Level Design
+1. **Progression sous Contrainte :** Aucune zone de "grinding" pacifique. Chaque palier d'expérience s'acquiert via une attrition physique ou morale.
+2. **Boucle de Rétroaction (Feedback Loop) :** L'accumulation de puissance martiale augmente la signature systémique du joueur, attirant l'agressivité environnementale.
+3. **Zones Instanciées (Simulations isolées) :** Les nids souterrains génèrent des sous-niveaux procéduraux avec des comportements d'essaim et des figures de commandement.
+4. **Rareté des Safe Zones :** Les abris sont transitoires. L'immunité nécessite une taxation économique (Velnor) ou politique (Sanctuaire).
+5. **Dégradation Visuelle (Shader & Morphologie) :** L'exposition aux zones corrompues modifie dynamiquement le modèle 3D du joueur (textures de peau, colorimétrie des yeux).
+6. **Points de Réémergence (Rebirth Zones) :** Lors d'un échec critique lié à une mécanique de capture, la renaissance se fait via un transfert de conscience hybride dans une zone non contrôlée.
 
 ---
 
 ## 5. ÉCOSYSTÈME FACTIONNEL
 
-L'île est instable par design. Aucune faction ne gagne tant que le Brouillard avance.
+L'architecture géopolitique de Velnora est instable et sujette à un effondrement programmé en raison de l'expansion du Brouillard Noir.
 
-### 5.1. Factions Humaines (Fragiles et désunies)
-- **Le Conseil de Velnor :** Gouvernement corrompu (Lord Regent Harlan Voss). Voit Elara comme esclave/chair à canon.
-- **La Guilde des Mercenaires (Iron Shields) :** Protègent contre récompense (Captain Rhea Vossler). Employeurs/protecteurs potentiels.
-- **Les Cultistes de la Crimson Mother :** Humains fanatiques (La Prophétesse Sanglante). Cherchent à corrompre ou sacrifier.
+### 5.1. Factions Humaines (Survivants et Structures Décadentes)
+- **Le Conseil de Velnor :** Autocratie parasitaire dirigée par le Régent Harlan Voss. Gère l'allocation des ressources avec cynisme.
+- **Les Boucliers de Fer (Iron Shields) :** Compagnie militaire privée sous le commandement de Rhea Vossler. Force de frappe mercenaire.
+- **Les Sectateurs de l'Écarlate :** Fanatiques humains (Prophétesse Sylvara) cherchant l'accélération de la mutation globale.
 
-### 5.2. Factions Monstrueuses (Dominantes)
-- **La Horde des Goblinoïds :** L'ennemi principal (Grukk le Briseur). Se reproduisent massivement. Obsédés par la capture de femelles.
-- **Les Deep Ones :** Créatures aquatiques voulant reprendre l'île (La Sea Witch). Possibilité de pactes dangereux.
-- **Les Abominations du Brouillard :** Serviteurs sans leader fixe de la Crimson Mother. Répandent la chair.
+### 5.2. Factions Endémiques et Parasitaires
+- **La Horde Goblinoïde :** Force antagoniste majeure, menée par Grukk. Stratégie d'attrition par reproduction exponentielle et terreur psychologique.
+- **Le Consortium des Deep Ones :** Vestiges de la civilisation originelle (La Sorcière des Mers). Ambitions territoriales marines et manipulations génétiques.
+- **L'Essaim du Brouillard :** Extensions organiques directes de la Mère Écarlate. Opèrent sans hiérarchie classique, visant l'assimilation de la biomasse.
 
-### 5.3. Factions Transcendantes
-- **Le Sanctuaire des Ossements :** Empire de l'Overlord Kazuki. Faction la plus puissante. Non-morts, joueurs loyaux.
-- **Les Joueurs Indépendants ("Les Élus") :** Survivants du monde réel (bandits, héros, fous).
-- **La Voix de la Fortune :** Entité neutre prophétisant la chute de l'île.
+### 5.3. Factions Transcendantes (Entités de la Singularité)
+- **Le Sanctuaire des Ossements :** Nécropole militarisée du Seigneur Liche Kazuki. Structure la plus stable, alimentée par la logique mathématique pure.
+- **Les Élus (Joueurs Isolés) :** Variables chaotiques. Individus possédant l'accès aux interfaces système, agissant comme mercenaires, tyrans ou victimes de haut niveau.
+- **La Voix de la Fortune :** Anomalie prédictive observant l'effondrement des variables, fournissant des données prophétiques sous forme d'énigmes.
 
-### 5.4. Triangle de Pouvoir (Relations)
-- **Humains vs Goblinoïds :** Guerre totale, humains perdants.
-- **Overlord vs Tous :** Kazuki annexe les territoires faibles.
-- **Deep Ones vs Humains :** Vengeance ancestrale.
-- **Cultistes vs Overlord :** Rivalité (libération vs contrôle du Brouillard).
-- **Elara (Joker) :** Peut devenir héroïne mercenaire, tueuse légendaire, vassale, ou Dark Lady.
+### 5.4. Équilibre Dynamique (Triangle de Pouvoir)
+- **Humains vs Horde :** Asymétrie totale. L'humanité est en perte constante de territoire.
+- **Sanctuaire vs Reste du Monde :** L'Overlord intègre méthodiquement les ressources utiles, ignorant le reste.
+- **Deep Ones vs Humains :** Actions de guérilla et d'enlèvements ciblés sur le littoral.
+- **La Protagoniste (Variable Alpha) :** Les actions d'Elara agissent comme un poids modifiant l'équilibre des scripts de conflit.
 
 ---
 
 ## 6. PROFILS DES PERSONNAGES NON-JOUEURS (PNJ)
 
-**Protagoniste : Elara Voss (25 ans).** Avatar féminin faible et mignon. Passe de timide, terrifiée et pleurnicharde ("Je ne suis qu'une petite fille...") à chasseresse froide, calculatrice et obsédée.
+**Protagoniste : Elara Voss.** Entité joueuse réinitialisée. Son arc évolutif la fait transiter d'une posture de proie vulnérable à celle d'une anomalie prédatrice méthodique.
 
-**PNJ Majeurs :**
-1. **Kazuki / Ainzuloth (Overlord) :** Ancien guild master japonais (30 ans, Lich 400+ ans). Grand squelette en robe rouge/noire. Calme, manipulateur, poli mais glacial. Allié, mentor, ou maître.
-2. **La Voix de la Fortune :** Oracle cynique (28-35 ans), yeux bandés, entourée de brume. Narratrice occasionnelle.
-3. **Captain Edward "The Last Ship" :** Capitaine (52 ans), barbu, cigare. Pragmatique, demande 25 pièces d'or pour fuir l'île.
+**Figures de Puissance Majeures :**
+1. **Kazuki / Ainzuloth (L'Overlord) :** Administrateur d'alliance japonais transmuté en mort-vivant suprême. Rationalité absolue, analyse l'univers uniquement via des algorithmes statistiques. Mentor ou Némésis.
+2. **La Voix de la Fortune :** Entité non combattante, avatar d'analyse prédictive.
+3. **Capitaine Edward ("Le Dernier Navire") :** Opérateur logistique unique disposant d'un moyen d'exfiltration. Accès conditionné (Ressources critiques requises).
 
-**PNJ de Velnor :**
-4. **Rhea "Iron Bitch" Vossler :** Leader des Iron Shields (34 ans). Dure, méprisante, respecte la détermination.
-5. **Lord Regent Harlan Voss :** Chef du Conseil (61 ans). Corrompu, opportuniste, lâche.
-6. **Cocona Vale :** Réfugiée innocente (25 ans), amie d'Elara. Mignonne, sale, optimiste fragile.
-7. **Big Mama (Griselda) :** Tenancière de bordel/nécromancienne mineure (48 ans). Énorme, maternelle en surface, sadique en dessous.
+**Structures de Velnor :**
+4. **Rhea "Iron Bitch" Vossler :** Opératrice tactique impitoyable, valorise l'efficacité brute.
+5. **Régent Harlan Voss :** Nœud de corruption politique, gestionnaire de la misère urbaine.
+6. **Cocona Vale :** Élément narratif de vulnérabilité. PNJ civil à haut risque de terminaison.
+7. **Griselda (Big Mama) :** Gestionnaire de flux illicites, courtier d'informations et manipulatrice des réseaux souterrains.
 
-**Antagonistes :**
-8. **Grand Chef Grukk le Briseur :** Leader de la Horde (29 ans). Hobgoblin colossal en armure d'os. Obsédé par la conquête.
-9. **La Prophétesse Sanglante (Sylvara) :** Leader folle des Cultistes (27 ans). Nue, couverte de sang et symboles.
-10. **La Sea Witch :** Maîtresse des Deep Ones. Mi-femme, mi-poisson. Manipulatrice, ancienne.
+**Cibles Prioritaires (Antagonistes) :**
+8. **Chef de Guerre Grukk :** Hobgoblin massif (Alpha de la Horde). Stratège brutal focalisé sur l'expansion de son espèce.
+9. **Sylvara (La Prophétesse) :** Catalyseur humain de l'infection écarlate.
+10. **La Sorcière des Mers :** Matriarche abyssale, gardienne des anciennes lois aquatiques.
 
-**PNJ Secondaires :**
-11. **Elise :** Prêtresse traumatisée (style Goblin Slayer). Compagne possible.
-12. **Thorn :** Orc renégat. Mercenaire massif détestant sa race.
-13. **Mira :** Voleuse des slums. Experte en poison, très cynique.
-14. **Leroy "Jenkins" :** Guerrier légendaire souvent saoul, très fort mais imprudent.
+**Unités d'Assistance ou Modificateurs PNJ :**
+11. **Elise :** Unité de soutien (Soin) souffrant de PTSD sévère (syndrome post-traumatique) affectant ses probabilités de lancer de sorts.
+12. **Thorn :** Unité "Tank" Orc en rupture de ban. Marge d'erreur élevée sur les jets de loyauté.
+13. **Mira :** Unité "Rogue" (Furtivité/Toxines). Cynisme et vénalité.
+14. **Leroy "Jenkins" :** Unité d'Assaut incontrôlable, génère un chaos tactique élevé lors des déploiements.
 
 ---
 
 ## 7. BESTIAIRE : ANATOMIE DE LA CORRUPTION
 
-### 7.1. Goblinoïds (La Plaie Vivante)
-- **Goblin (Lvl 3-12) :** Lâches en solo, sadiques en meute. Obsédés par la capture pour reproduction. Gestation 3 semaines.
-- **Hobgoblin (Lvl 12-25) :** Chefs territoriaux, brutaux, aiment "marquer" les captives.
-- **Orc / Orkinds (Lvl 18-35) :** Massifs, très forts, forte libido. Engendrent des demi-orcs.
-- **Ogre (Lvl 30-45) :** Géants obèses (3-4m).
-- **Goblin Champion / Goblin Lord (Lvl 40+) :** Boss de nid, intelligent, utilise des artefacts.
+### 7.1. Goblinoïds (L'Essaim Reproducteur)
+- **Goblin (Lvl 3-12) :** Unités d'infanterie légère. Programmation comportementale axée sur l'agression de groupe et la capture (Comportement de harcèlement).
+- **Hobgoblin (Lvl 12-25) :** Sous-officiers territoriaux. Statistiques de force et de résistance accrues.
+- **Orc / Orkinds (Lvl 18-35) :** Infanterie lourde de choc. Vecteurs de génération d'hybrides puissants via capture.
+- **Ogre (Lvl 30-45) :** Véhicules de siège biologiques. Dégâts cinétiques massifs.
+- **Seigneur Goblin (Lvl 40+) :** Unités de commandement d'instance. Accès à l'équipement magique et au contrôle des foules.
 
-### 7.2. Créatures du Brouillard & Abominations
-- **Corrompu / Mist Walker (Lvl 10-30) :** Mutants infectant par contact sexuel ou morsure.
-- **Fleshspawn (Lvl 25-50) :** Amas de chair, tentacules, cherchant la fécondation.
-- **Crimson Horror (Lvl 55+) :** Tentaculaire géant lié à la Déesse.
+### 7.2. Abominations du Brouillard (L'Infection)
+- **Marche-Brume (Lvl 10-30) :** Unités d'infection de base. Leurs frappes incrémentent les jauges de Corruption du joueur.
+- **Rejeton de Chair (Lvl 25-50) :** Aglomérats biologiques. Priorisent l'assimilation et génèrent des zones de dégâts persistantes (DoT).
+- **Horreur Écarlate (Lvl 55+) :** Drones géants de la Mère Écarlate, capables d'altérer la topographie locale de l'arène.
 
-### 7.3. Deep Ones
-- **Deep One (Fishman) (Lvl 15-35) :** Intelligents, organisés. Peuvent s'hybrider.
-- **Sirène Corrompue (Lvl 20-40) :** Belles mais avec dents de requin, chantent pour noyer.
-- **Kraken Spawn (Lvl 45+) :** Tentacules géants de la Crimson Mother.
+### 7.3. Entités Abyssales (Les Deep Ones)
+- **Guerrier des Profondeurs (Lvl 15-35) :** Combattants amphibies organisés, résistants aux dégâts physiques classiques.
+- **Sirène Altérée (Lvl 20-40) :** Unités de contrôle (Crowd Control). Leurs émissions sonores génèrent des états de confusion ou de paralysie.
+- **Kraken Spawn (Lvl 45+) :** Menaces environnementales maritimes massives.
 
-### 7.4. Non-Morts & Serviteurs
-- **Skeleton Warrior (Lvl 15-30) :** Soldats de base de l'Overlord.
-- **Death Knight (Lvl 40-60) :** Élites de l'Overlord, très puissants.
-- **Soul Eater (Lvl 50+) :** Esprits se nourrissant des traumatismes d'Elara.
+### 7.4. Structures Nécromantiques
+- **Garde Squelette (Lvl 15-30) :** Infanterie d'attrition de l'Overlord. Faible résistance, immunité aux toxines.
+- **Chevalier de la Mort (Lvl 40-60) :** Garde prétorienne, lourdement armurée, générant des dégâts d'ombre et de froid.
+- **Mange-Âme (Lvl 50+) :** Entités éthérées drainant spécifiquement les jauges de Santé Mentale/Trauma.
 
-### 7.5. Autres Créatures
-- **Giant Rat (Lvl 2-8) :** Velnor Slums, vecteurs de maladie.
-- **Bandit Humain (Lvl 5-18) :** Routes, souvent plus dangereux que les monstres.
-- **Dire Wolf (Lvl 10-20) :** Forêts, chassent en meute.
-- **Cultist Zealot (Lvl 15-30) :** Fanatiques utilisant la magie de chair.
-- **Arachne (Lvl 20-35) :** Forêt, tisse des pièges, poison aphrodisiaque.
-- **Mutated Bear (Lvl 22-32) :** Montagnes, corrompu par le Brouillard.
-- **Troll des Marais (Lvl 25-40) :** Marais Putrides, régénère rapidement.
+### 7.5. Faune et Menaces Périphériques
+- **Rats Géants (Lvl 2-8) :** Nuisibles urbains, appliquent le débuff "Maladie".
+- **Pillards (Lvl 5-18) :** Unités humaines équipées de pièges et d'armes à distance.
+- **Loups Funestes (Lvl 10-20) :** Mobilité élevée, algorithmes de contournement et d'attaque dans le dos.
+- **Zélotes (Lvl 15-30) :** Lanceurs de sorts humains suicidaires, explosant à 0 HP.
+- **Arachnes (Lvl 20-35) :** Prédatrices embusquées. Poison incapacitant forçant des états de capture.
+- **Ours Mutants (Lvl 22-32) :** Pools de points de vie massifs, enrage sous 30% de santé.
+- **Trolls des Marais (Lvl 25-40) :** Régénération passive extrême. Vulnérabilité stricte aux dommages thermiques (feu).
 
-### 7.6. Boss Majeurs du Monde
-1. **Grand Chef Grukk le Briseur**
-2. **La Sea Witch**
-3. **The Crimson Matriarch** (Avatar de la Déesse à Syphralis)
-4. **Ainzuloth (Kazuki)** (Si devenu hostile)
-5. **The Black Mist Heart** (Entité finale, Lvl 70+)
+### 7.6. Entités Alpha (World Bosses)
+1. **Grukk le Briseur :** Mécaniques de vagues d'adds et d'étourdissement lourd.
+2. **La Sorcière des Mers :** Manipulation des niveaux d'eau et conjuration d'entités abyssales.
+3. **La Matriarche Écarlate :** Combat d'instance à phases multiples à Syphralis.
+4. **Kazuki (Engagement Hostile) :** Combat de type "Puzzle" nécessitant le contournement de ses défenses algorithmiques parfaites.
+5. **Le Noyau du Brouillard Noir :** Cœur du système corrompu, niveau de menace 70+.
 
 ---
 
 ## 8. ARCHITECTURE DES QUÊTES
 
-Les quêtes utilisent la machine d'état du serveur (State Machine), avec des embranchements narratifs sombres (violences, échecs).
+Le système de progression repose sur une architecture de Machine d'États (State Machine) serveur (Rust/Bevy). Les bifurcations d'états peuvent générer des événements de capture ou d'infection plutôt que des game over stricts.
 
-### 8.1. Quête Principale (Prototype) : Q_MAIN_SURVIVAL — « Le Prix du Sang »
-**Contexte :** Elara doit amasser de l'or dans les Slums pour survivre, ce qui mène à son premier traumatisme majeur.
+### 8.1. Arborescence Prototype : Q_MAIN_SURVIVAL — « Acquisition de Capitaux »
+**Directives :** Accumuler des devises pour subvenir aux besoins primaires, conduisant à une embuscade inévitable.
 
-| Étape (State) | Objectif UI | Déclencheurs / Scripts (Conditions) |
+| Nœud d'État | Directives UI | Triggers & Exécution Systémique |
 | :--- | :--- | :--- |
-| **0_Init** | *Trouvez un moyen de gagner de l'or.* | Arrivée dans les Slums de Velnor. -> State = 1 |
-| **1_Job** | *Effectuez des tâches pour Big Mama.* | `gold_earned` >= 5. -> State = 2 |
-| **2_Ambush** | *Livrez le paquet dans la ruelle sombre.* | Trigger box ruelle touchée. Spawn de 3 Goblins. -> State = 3 |
-| **3_Trauma** | *Survivez (ou subissez).* | Si HP tombe à 0 : Lancement *Cutscene_Trauma_01*. Set `trauma_level += 1`. -> State = 4 |
-| **4_WakeUp** | *Relevez-vous.* | Interaction avec l'environnement. Débloque *Rage Froide*. -> State = 5 (Complete) |
+| **0_Init** | *Générer un capital de départ.* | Localisation : Slums. Initialisation du timer de faim. -> Transition State = 1 |
+| **1_Contrat** | *Exécuter la logistique pour Griselda.* | Condition : `inventory.gold >= 5`. -> Transition State = 2 |
+| **2_Interception** | *Atteindre le point de livraison.* | Déclencheur : Collision avec Box(Alley_01). Invocation : `spawn_entities(Goblin_Scout, 3)`. -> Transition State = 3 |
+| **3_Résolution** | *Survivez ou subissez les conséquences.* | Condition de Victoire : `kill_count == 3` -> State 5. <br> Condition d'Échec : `player.HP == 0` -> Déclenchement événement `Capture_01`, `player.trauma_index += 1`. -> Transition State = 4 |
+| **4_Conséquence** | *Émergence post-traumatique.* | Activation : Réapparition instanciée. Ajout passif `Cold_Rage`. -> Transition State = 5 |
 
 ---
 
 ## 9. INGÉNIERIE DES DIALOGUES ET SCRIPTING
 
-### 9.1. Standards de Rédaction (Format PS2 revisité)
-- **Contrainte UI :** Max 3 lignes par bulle, 60 caractères par ligne.
-- **Style :** Cru, direct. Pas de métaphores héroïques. Les notifications RPG (système) sont affichées comme des dialogues glacials.
+### 9.1. Paramètres d'Interface (Esthétique Rétro)
+- **Contraintes de Rendu :** Système de bulles textuelles strict (Max 3 lignes, 60 caractères par ligne). Polices pixelisées (nearest-neighbor filtering).
+- **Registre Linguistique :** Pragmatique, expurgé de tout lyrisme héroïque.
+- **Système Dissonant :** Les alertes systémiques s'intercalent comme des diagnostics cliniques au milieu de la terreur humaine.
 
-### 9.2. Script : Scène de Rencontre (Kazuki & Elara)
-> **KAZUKI :** "Une survivante. Niveau 34. Ta progression est... statistiquement improbable."
-> **ELARA :** [Reste silencieuse. Main sur son arme.]
-> **KAZUKI :** "Baisse cette dague. Si je voulais ta mort, le système l'aurait déjà actée."
-> **SYSTEM_UI :** *[Alerte : Différence de niveau mortelle. Fuite recommandée.]*
-> **KAZUKI :** "Tu massacres les goblins avec une efficacité pathologique. Sers-moi, et je t'offrirai leur extinction."
+### 9.2. Exemple de Script : Négociation avec l'Overlord
+> **KAZUKI :** "Sujet identifié. Niveau 34. Écart-type d'évolution statistiquement aberrant."
+> **ELARA :** [Posture défensive. Animation Idle_Combat activée.]
+> **KAZUKI :** "Cessez cette simulation d'hostilité. Si votre suppression était requise, le protocole serait déjà en cours d'exécution."
+> **SYSTEM_UI :** *[Alerte critique : Évaluation de la cible impossible (Lvl ??). Retraite immédiate conseillée.]*
+> **KAZUKI :** "Votre ratio d'élimination de la biomasse goblinoïde est pathologiquement efficace. Intégrez ma structure, et leur éradication sera systématique."
 
 ---
 
 ## 10. SYSTÈMES D'ÉVÉNEMENTS DYNAMIQUES
 
-Les événements sont aléatoires ou déclenchés par les actions d'Elara. Le Brouillard Noir augmente leur fréquence/intensité.
+Gérés par l'orchestrateur serveur, ces événements forcent le joueur à s'adapter à une asymétrie croissante.
 
-### 10.1. Événements Quotidiens / Fréquents (Ambient)
-- **Raid Goblin :** Nuit. 15-40 goblins attaquent les Slums. Très fréquent. Risque de viol/enlèvement.
-- **Avancée du Brouillard Noir :** L'horloge narrative. Le brouillard avance de 200-800m, buffant les monstres.
-- **Émeute de la Faim :** Les réfugiés attaquent les entrepôts du Conseil de Velnor (pillage/incendies).
-- **Patrouille des Iron Shields :** Expédition des mercenaires. Possibilité de rejoindre pour une quête.
-- **Chasse aux Joueurs :** Des cultistes ou bandits traquent les "Élus".
+### 10.1. Routines Fréquentes (Génération Quotidienne)
+- **Incursions Nocturnes :** Apparition de 15 à 40 unités goblinoïdes en bordure urbaine. Risque d'altération définitive des PNJ (mort/capture).
+- **Expansion du Brouillard :** L'horloge macro-systémique. Modification asynchrone des chunks environnementaux (progression de 200 à 800m), appliquant un multiplicateur de statistiques aux entités corrompues locales.
+- **Ruptures Logistiques :** Événements d'émeute civile dans les zones de concentration de population, altérant les prix de l'économie locale.
+- **Opérations des Mercenaires :** Scripts de patrouille alliée croisant la trajectoire du joueur. Opportunités d'assistance tactique temporaire.
+- **Traque des Élus :** Escouades d'élimination ciblées spécifiquement sur le tag `is_player`, forçant une vigilance spatiale constante.
 
-### 10.2. Événements Hebdomadaires / Mensuels
-- **Grande Migration Goblin :** Déplacement massif, création de nouveaux nids, bloque les routes.
-- **Festival du Désespoir :** (Tous les 15j). Marché noir géant, prostitution, gladiateurs, apparitions de la Fortune Teller.
-- **Incursion des Deep Ones :** Attaques sur les docks, enlèvements pour hybridation.
-- **Purge du Conseil :** Lord Harlan exécute des traîtres/réfugiés, augmentant la tension.
-- **Convoi de l'Overlord :** Caravane du Sanctuaire. Sécurisée mais dangereuse pour les non-alliés.
+### 10.2. Cycles Moyens (Génération Hebdomadaire/Mensuelle)
+- **Redéploiement d'Essaim :** Migration de masse de la Horde, altérant le maillage de navigation (NavMesh) des routes principales.
+- **Économie de l'Ombre :** Activation périodique du grand marché noir. Apparition de marchands d'artefacts rares et de l'entité prédictive (La Voix).
+- **Assauts Littoraux :** Activité accrue des Deep Ones, modifiant la dangerosité des zones portuaires.
+- **Épuration Civile :** Exécutions publiques modifiant le niveau de tension urbaine et les réactions des PNJ.
+- **Logistique du Sanctuaire :** Déplacement d'actifs sécurisés de l'Overlord traversant le continent.
 
-### 10.3. Événements Majeurs (Story-Driven & Rares)
-- **Surge du Brouillard :** Explosion couvrant l'île. Spawn massif de Fleshspawn, Velnor en danger extrême.
-- **Guerre des Nids :** Tribus goblines s'entretuent. Elara peut exploiter la situation.
-- **Rébellion des Réfugiés :** Soulèvement des Slums, massacre général ou changement de pouvoir.
-- **Invocation de la Crimson Mother :** Rituel des cultistes, apparition d'un avatar mineur.
-- **Recrutement du Sanctuaire / Punition :** Kazuki recrute des Players ou détruit une faction (ex: tribu goblin) pour s'affirmer.
+### 10.3. Événements Majeurs (Modifications Structurelles de l'Univers)
+- **Ruptures Massives (Surge) :** Poussées brusques du Brouillard Noir instanciant des boss de haut niveau dans des zones précédemment sécurisées.
+- **Guerre de Factions :** Affrontement scripté entre tribus ennemies, permettant au joueur d'opérer des frappes chirurgicales sur les flancs.
+- **Insurrection Urbaine :** Perte temporaire ou définitive du contrôle de certains hubs urbains.
+- **Manifestation Écarlate :** Invocation d'avatars majeurs de la corruption par les sectateurs.
+- **Manœuvres de l'Overlord :** Opérations d'assimilation massive ou de destruction totale de certaines régions géographiques par les troupes squelettiques.
 
-### 10.4. Événements Personnels (Elara)
-- **Traumatisme Collectif :** Après une capture/viol, déclenche un "Flashback" (Mode Berserk in-game).
-- **Grossesse Forcée :** Capture longue. Événement de naissance menant potentiellement à *Rebirth*.
-- **Rencontre avec un Ancien Joueur :** Croisement avec un Player (allié/rival, trahison possible).
-- **Vision de la Fortune :** La Voix de la Fortune prophétise une fin amère basée sur les actions actuelles.
-- **Marque de la Crimson :** Le Brouillard marque Elara (Corruption ++, donne des pouvoirs de chair).
+### 10.4. Traumatismes Personnels (Liés à l'État du Joueur)
+- **Rupture Cognitive (Flashback) :** En cas d'accumulation critique de la jauge de Trauma, perte de contrôle momentanée avec application d'un buff de dégâts incontrôlable.
+- **Cycle d'Incubation :** Conséquence des états de capture, menant à des pénalités massives d'endurance, et pouvant déclencher la routine de Renaissance (Rebirth).
+- **Interférences Systémiques :** Rencontres scriptées avec d'autres entités portant le tag `is_player`.
+- **Prophéties Analytiques :** L'entité de la Fortune compile les données d'action du joueur pour prédire de manière déterministe son pourcentage d'échec.
+- **Assimilation Charnelle :** Augmentation de l'indice de Corruption conférant des résistances spécifiques en l'échange d'une altération du modèle 3D.
 
-### 10.5. Événements Endgame (Très Rares)
-- **Siège de Velnor :** Alliance Goblinoïds/Deep Ones/Cultistes contre Velnor.
-- **Réveil de la Crimson Mother :** Tentative de retour complet de la Déesse.
-- **Offre de l'Overlord :** Kazuki propose à Elara de devenir sa vassale ou successeure.
-- **Dernier Bateau :** Edward annonce ses deux derniers voyages (Pression de temps).
+### 10.5. Routines Finales (Endgame)
+- **Convergence Totale :** Assaut multicibles sur le dernier bastion urbain.
+- **Singularité Écarlate :** Tentative de fusion complète de la Mère Écarlate avec l'interface serveur.
+- **Dernier Acte Diplomatique :** Proposition de transfert de pouvoir ou de souveraineté par l'Overlord.
+- **Fermeture des Ports :** Disparition progressive des vecteurs d'extraction maritimes.
 
 ---
 
-## 11. DIRECTION CINÉMATOGRAPHIQUE
+## 11. DIRECTION AUDIO-VISUELLE ET CINÉMATOGRAPHIQUE
 
-Caméras fixes et angles oppressants pour accentuer la vulnérabilité (Style PS2/Metin2).
+Le projet obéit à des contraintes techniques rétro-esthétiques sévères visant à instaurer un malaise cognitif.
 
-**Cutscene : La Diseuse de Bonne Aventure**
-- `CAMERA_01` : Plan en contre-plongée sur Elara marchant dans la boue.
-- `AUDIO` : Bruits de pluie et respiration lourde.
-- `VFX` : Apparition progressive de brume aux pieds.
-- `CAMERA_02` : Gros plan sur le visage de la Diseuse de Bonne Aventure, yeux bandés.
-- `TEXTE OVERLAY` : *"Peu importe tes choix, petite fille... l'île finit toujours par gagner."*
-- `ACTION` : Disparition en un cut (fade to black rapide).
+### 11.1. Contraintes Visuelles (Architecture Bevy / Esthétique PS2)
+- **Modélisation Low-Poly :** Environnements et personnages bridés aux alentours de 5,000 triangles. Texturisation soumise au filtrage Nearest-Neighbor (absence d'anti-aliasing) procurant une netteté rugueuse.
+- **Éclairage Restreint :** Utilisation exclusive de matériaux "Unlit" (KHR_materials_unlit). Les ombres et l'occlusion ambiante (AO) sont statiquement gravées (baking) dans les textures diffuses ou les couleurs de vertex. Absence de physically based rendering (PBR) ou de normal maps.
+- **Cinématographie Algorithmique :** Utilisation de caméras à axes fixes (plans pré-calculés, plongées écrasantes) lors des séquences d'événements, forçant un angle de vision oppressant et réduisant artificiellement la perception de l'espace.
+
+### 11.2. Architecture Sonore Dissonante
+- **Conception Audio :** Contraste majeur avec l'horreur visuelle. L'environnement sonore (BGM) repose sur des compositions classiques douces, apaisantes, évoquant les MMORPG idylliques des années 2000.
+- **Objectif Psychologique :** Cette musique "sans fatigue auditive" entre en dissonance totale avec les hurlements ambiants et la brutalité des combats, renforçant le sentiment que le "système du jeu" est indifférent à la souffrance de l'avatar. Le faux réconfort auditif exacerbe la réalité cauchemardesque.
 
 ---
 
 ## 12. SPÉCIFICATIONS TECHNIQUES IA (HORIZON 2030)
 
-Le backend Rust/Bevy utilise le MCP (Model Context Protocol) et le RAG (Retrieval-Augmented Generation) pour donner vie au monde oppressant.
+Le backend Rust/Bevy s'interface avec le Model Context Protocol (MCP) pour simuler une intelligence dynamique chez certains PNJ majeurs, s'appuyant sur l'extraction d'informations (RAG).
 
-### 12.1. Modèle de Contrat MCP pour l'Overlord (Exemple Kazuki)
+### 12.1. Contrat de Données MCP (Profil Logique : Kazuki)
 ```json
 {
-  "agent_id": "kazuki_overlord",
-  "system_directive": "Act as Kazuki (Ainzuloth), a 400-year-old Lich Overlord who used to be a Japanese gamer. You are extremely intelligent, politely cold, and view the world through RPG mechanics and statistics. Do not show empathy.",
+  "agent_id": "kazuki_overlord_node",
+  "system_directive": "Act as Kazuki, a highly intelligent, 400-year-old Lich Overlord who interprets the physical world entirely through RPG statistics, probability, and ruthless logic. Exhibit zero emotional resonance or empathy. Use clinical, formal terminology.",
   "dynamic_context": {
-    "world_state": "mist_advancing, goblin_horde_active",
-    "player_stats": {
+    "world_status": "mist_expansion_rate_critical, goblin_horde_population_spike",
+    "player_metrics": {
       "level": 34,
-      "corruption_level": 45,
-      "trauma_level": 80
+      "corruption_index": 45.2,
+      "trauma_index": 80.7,
+      "active_class_path": "exterminator_hybrid"
     },
-    "last_player_action": "massacred_goblin_nest_03"
+    "recent_event_log": "target_massacred_hive_node_03_using_incendiary_tactics"
   },
   "retrieved_memories": [
-    "The player refused my first offer of alliance.",
-    "The player uses poison and fire extensively against goblins."
+    "Target previously rejected alliance proposition #1.",
+    "Target displays extreme behavioral bias against goblinoid entities."
   ],
-  "allowed_actions": ["offer_pact", "cast_intimidation", "reveal_lore"]
+  "allowed_operations": ["execute_pact_offer", "deploy_intimidation_aura", "provide_system_lore"]
 }
 ```
 
@@ -343,12 +342,13 @@ Le backend Rust/Bevy utilise le MCP (Model Context Protocol) et le RAG (Retrieva
 
 ## 13. GLOSSAIRE TECHNIQUE ET NARRATIF
 
-- **Brouillard Noir (Black Mist) :** La corruption vivante issue de la fusion du jeu et de la Crimson Mother.
-- **Élus (Players) :** Humains du monde réel coincés dans le jeu (Elara, Kazuki).
-- **MCP :** Model Context Protocol, utilisé pour dynamiser les IA narratrices via LLM.
-- **Rebirth :** Mécanique de mort hybride : une joueuse mourant en couche renaît avec les traits de la race paternelle.
-- **Sanctuaire des Ossements :** Capitale imprenable de l'Overlord au centre de l'île.
-- **Velnora :** L'île continentale, dernier bastion de l'humanité, lentement dévorée.
+- **Artéfacts Rares :** Objets systémiques d'une valeur inestimable, constituant la seule méthode d'outrepasser les protocoles de suppression définitive (mort permanente).
+- **Brouillard Noir (Black Mist) :** Vecteur de corruption entropique, résultante de l'anomalie de fusion entre la simulation *Eternal Realms* et l'univers physique.
+- **Classes Actives :** Voies de spécialisation remplaçant le modèle universel, permettant d'adopter des rôles asymétriques (Assassin, Thaumaturge corrompue) en fonction des variables de survie.
+- **Élus (Players) :** Entités humaines importées, marquées par le tag systémique `is_player`, leur conférant une courbe d'apprentissage et de puissance logarithmique accélérée.
+- **MCP (Model Context Protocol) :** Interface de standardisation permettant l'ingestion du contexte de jeu (ECS Bevy) par des modèles de langage externes pour l'animation des PNJ.
+- **Renaissance Hybride (Rebirth) :** Sous-routine critique. Si le vecteur (joueur) est supprimé lors d'une période d'incubation forcée, le système génère un nouvel avatar au niveau 1 héritant de traits algorithmiques liés à l'espèce de l'agresseur.
+- **Velnora :** Espace confiné, dernier nœud de résistance humaine sur une topographie insulaire programmée pour la destruction.
 
 ---
-*Fin du Document LORE.md — Validation technique requise par l'équipe Backend et Game Design.*
+*Fin du Document LORE.md — Conformité requise avec les standards architecturaux Rust/Bevy et la direction artistique PS2.*

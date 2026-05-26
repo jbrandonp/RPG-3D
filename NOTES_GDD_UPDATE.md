@@ -1,29 +1,49 @@
 # NOTES DE MISE À JOUR : GAME DESIGN DOCUMENT (GDD)
 
-Suite à la bascule narrative vers l'univers de **"Elara's Black Mist"**, le fichier `GAME_DESIGN_DOCUMENT.md` actuel doit être revu en profondeur. Voici les directives techniques et conceptuelles à intégrer lors de la prochaine refonte du GDD :
+Suite à la bascule narrative vers l'univers de **"Elara's Black Mist"**, le fichier `GAME_DESIGN_DOCUMENT.md` actuel doit être revu en profondeur. Voici les directives techniques, conceptuelles et architecturales à intégrer :
 
-## 1. NOUVELLES STATISTIQUES JOUEUR (Variables d'État)
-Le profil de personnage d'Elara n'est plus classique (HP/MP/Endurance). Il faut ajouter des jauges de survie psychologique et physique :
-- **Trauma (Traumatisme) :** Jauge (0-100). Augmente lors de combats extrêmes, embuscades, ou défaites (viols/tortures). À partir de 75, débloque des malus de fuite mais potentiellement des buffs de type "Rage Froide" ou "Berserk".
-- **Corruption :** Jauge (0-100). Augmente lors de l'exposition prolongée au *Black Mist* ou via contact avec les Abominations. Influence l'apparence physique (yeux rouges, peau pâle) et les interactions PNJ (rejet dans les Slums, acceptation chez les Cultistes).
-- **Pregnancy (Grossesse) & Race Seed :** Mécanique conditionnelle si la HP tombe à 0 face à des Goblinoïds ou Deep Ones. Déclenche des debuffs massifs de vitesse et d'endurance pendant un cycle in-game.
+## 1. NOUVELLES STATISTIQUES JOUEUR (Variables d'État ECS)
+Le profil de personnage d'Elara n'est plus classique. La survie psychologique et physique se quantifie via de nouvelles jauges.
 
-## 2. MÉCANIQUE DE REBIRTH (Renaissance Hybride)
-La mort définitive existe pour les PNJ, mais pas pour le Joueur ("Élu").
-- **Système de Rebirth Actuel :** Si Elara meurt *pendant une grossesse*, la mécanique de Rebirth s'active. Elle réapparaît au niveau 1 (ou avec un malus d'XP sévère), mais hérite de traits raciaux liés au "père" du cycle précédent.
-- **Exemple d'Implémentation Bevy (Rust) :**
-  - `Goblin_Trait`: +20% Vitesse d'attaque, Vision nocturne, -30% Charisme Humain.
-  - `DeepOne_Trait`: Respiration aquatique, +15% Résistance magique.
-  - Le `PlayerBundle` devra accepter un vecteur de `Traits` persistants lors de la recréation de l'entité.
+**Implémentation Bevy (Rust) :**
+```rust
+#[derive(Component)]
+pub struct PsychologicalState {
+    pub trauma_index: f32, // (0.0 - 100.0)
+    pub corruption_index: f32, // (0.0 - 100.0)
+}
 
-## 3. REFONTE DES CONDITIONS D'ÉCHEC (Game Over / Defeat States)
-- Remplacer l'écran de mort classique par des **Scènes de Défaite** (Defeat Events).
-- Tomber à 0 HP face à un groupe de Goblinoïds ne tue pas instantanément : cela déclenche un `State::Captured` ou `State::Traumatized`. Le joueur réapparaît dans un nid (donjon) ou est jeté à moitié mort dans les bois, avec l'inventaire vidé (sauf équipement "Soulbound").
+#[derive(Component)]
+pub struct IncubationStatus {
+    pub is_active: bool,
+    pub genome_seed: EntityType, // Détermine le trait hérité en cas de Rebirth
+    pub cycle_timer: Timer,
+}
+```
+- **Trauma :** À partir de 75, désactivation temporaire du contrôle moteur (Fuite impossible) ou buff non ciblé de type `Cold_Rage`.
+- **Corruption :** Modifie le rendu du modèle 3D du joueur (vertex colors) et les tables d'hostilité des PNJ.
 
-## 4. SYSTÈME DE LOOT ET EXPÉRIENCE (L'Avantage "Player")
-- Les joueurs (Elara, Kazuki) possèdent un tag `is_player: true` caché dans la base de données.
-- **Modification de la courbe d'XP :** Gagner de l'XP sur les humains rapporte peu. Massacrer des Goblinoïds applique un multiplicateur occulte (`XP_Mult = 1.5`), encourageant le style de jeu obsessionnel type "Goblin Slayer".
+## 2. SYSTÈME DE CLASSES ET SPÉCIALISATION
+L'ancien système "classless" est remplacé par une arborescence de spécialisations liée aux traumatismes vécus.
+- L'avatar débute en tant que `Survivor` (sans classe).
+- Les classes se débloquent via les actions : l'extermination à la dague/poison débloque la classe `Exterminator_Hybrid` ; l'exposition volontaire au Brouillard Noir débloque `Corrupted_Thaumaturge`.
 
-## 5. DYNAMIQUES DE MONDE (Le Brouillard Noir)
-- Le serveur doit implémenter un chronomètre global (World Clock) gérant l'avancée du **Black Mist**.
-- Techniquement, cela implique de modifier la configuration des "Chunks" du monde dans Bevy : modifier le `BiomeType` de `Plains` vers `Corrupted_Mist` de manière asynchrone, modifiant la table de spawn des monstres (Spawn Tables) et la colorimétrie des shaders de la zone.
+## 3. MORT PERMANENTE ET ARTÉFACTS RARES
+La condition d'échec par défaut (`HP == 0` sans mécanisme de capture) mène à la suppression définitive du profil (Perma-Death).
+- **Contournement Système :** L'utilisation d'"Artéfacts Rares" (ex: *Soul-Binding Runes*) consomme l'objet lors du coup fatal, forçant une téléportation asynchrone vers un Safe Node pré-défini.
+- Ce mécanisme doit être validé côté serveur pour prévenir la triche client.
+
+## 4. MÉCANIQUE DE REBIRTH (Renaissance Hybride)
+Si le joueur subit un Game Over (`HP == 0`) pendant que le `Component` `IncubationStatus` est actif, le serveur purge le personnage principal mais crée une nouvelle Entité Niveau 1, injectant un trait spécifique.
+- `Goblin_Genome` : +20% Vitesse d'attaque, -30% Charisme Humain.
+- `DeepOne_Genome` : Résistance magique accrue.
+
+## 5. ARCHITECTURE RÉSEAU (WebTransport / QUIC)
+La rudesse des punitions exige une réactivité sans faille et une architecture anti-triche stricte ("Le client propose, le serveur dispose").
+- Les mouvements et le positionnement sont streamés via des canaux **Unreliable UDP** (QUIC Datagrams) avec de la prédiction côté client.
+- Les actions irréversibles (consommation d'un Artéfact Rare, validation d'un état de Capture ou de Mort, loot d'objets vitaux) sont traitées via des **Bidirectional Streams (Reliable)**.
+- Les mises à jour de l'état mental (Trauma, Corruption) peuvent être synchronisées en arrière-plan via des **Unidirectional Streams**.
+
+## 6. DYNAMIQUES DE MONDE ET RENDU (Le Brouillard Noir)
+- Le serveur orchestre une horloge globale. Lorsqu'une zone est consumée par le Brouillard, le serveur notifie les clients de modifier l'état visuel du Chunk correspondant.
+- **Rendu Visuel Client :** Le jeu impose l'utilisation de shaders basiques (`KHR_materials_unlit`) sans éclairage dynamique, limitant les modèles à 5,000 polygones avec un filtrage *Nearest-Neighbor*. Les ombres sont intégrées directement dans les textures (Baking), soulignant la rigidité cruelle de l'environnement PS2.
