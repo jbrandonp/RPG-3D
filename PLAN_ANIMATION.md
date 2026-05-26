@@ -1,92 +1,172 @@
-# Plan d'Animation : Personnages, Créatures, Sorts et Effets (MMORPG 3D Bevy)
+# Document de Conception Technique (TDD) : Système d'Animation et Effets Visuels (VFX)
 
-## 1. Vision et Style Visuel
+## 1. Objectifs et Périmètre
 
-### Style Rétro PS2 / Metin2
-L'esthétique globale vise un rendu 3D rétro, inspiré de l'ère PS2 (faible nombre de polygones, textures peintes à la main, absence de PBR complexe).
-- **Format de fichier :** Les modèles et animations utiliseront le format **glTF** (`.glb`), parfaitement supporté par Bevy.
-- **Squelettes (Rigging) :** Animations squelettiques (Skeletal Animation) avec un nombre limité d'os pour préserver les performances et le style "low poly".
-- **Blending :** Utilisation de transitions franches ou de fondus très courts entre les animations pour un ressenti "arcade" et réactif typique des jeux de cette époque.
+Ce document de conception technique détaille l'architecture et les spécifications d'implémentation du système d'animation, des états de personnages et des effets visuels pour le projet MMORPG. Basé sur le moteur **Bevy (Rust)**, le système doit conjuguer une direction artistique tridimensionnelle rétro (génération PlayStation 2 / Metin2) avec une infrastructure réseau moderne, garantissant réactivité client et intégrité serveur (serveur autoritaire).
 
 ---
 
-## 2. Architecture Technique (Moteur Bevy)
+## 2. Direction Artistique et Modélisation 3D
 
-Dans Bevy, l'animation s'intègre naturellement dans l'architecture ECS (Entity Component System).
-
-### Composants Bevy Utilisés
-- `AnimationPlayer` : Composant standard de Bevy pour jouer les clips d'animation glTF.
-- `AnimationGraph` / `AnimationTransitions` : Pour gérer les fondus et le passage d'une animation à l'autre (ex: Marche -> Course).
-- `StateMachine` (Crate externe comme `seldom_state` ou logique custom) : Pour définir formellement les états d'une entité (ex: `Idle`, `Running`, `Attacking`, `Stunned`).
-
-### Workflow ECS
-1. **Input / Réseau :** Une action est détectée (touche pressée par le joueur local, ou paquet réseau reçu pour une autre entité).
-2. **Changement d'État :** Le composant `ActionState` ou `PlayerState` de l'entité est mis à jour (ex: `State::Attacking`).
-3. **Système de Résolution :** Un système observe les changements de `State`. Lorsqu'un état change, il envoie un ordre à l'`AnimationPlayer` associé pour jouer le clip correspondant.
-4. **Événements d'Animation :** L'utilisation de timers ou d'événements liés aux frames d'animation pour déclencher des effets sonores (bruits de pas) ou des effets visuels (particules d'un sort).
+### 2.1. Esthétique "Rétro 3D"
+L'esthétique globale est contrainte par des directives techniques précises afin d'assurer de hautes performances sur un grand nombre d'entités simultanées et d'évoquer l'ère des MMO du début des années 2000.
+- **Format Standardisé :** L'intégralité des assets animés doit être exportée au format **glTF 2.0** (`.glb`).
+- **Squelettage (Rigging) Optimisé :** L'animation squelettique (Skeletal Animation) imposera une limite stricte sur le nombre d'os (bones) par modèle (généralement < 30 pour les PNJ mineurs, < 60 pour les joueurs) afin d'alléger le traitement CPU/GPU.
+- **Interpolation et Blending :** Les transitions d'animation (blending) seront configurées sur des durées très courtes (ex: `0.1s` à `0.2s`). Cette contrainte technique volontaire produit un rendu vif et "arcade", caractéristique des cibles visuelles de référence.
 
 ---
 
-## 3. Synchronisation Réseau et Fluidité
+## 3. Architecture Logicielle et Intégration Bevy
 
-Pour un MMORPG, la latence est le principal ennemi. Le serveur est autoritaire, mais le client doit être réactif.
+Le système d'animation s'intègre au cœur du paradigme ECS (Entity Component System) de Bevy. Le serveur gère la logique d'état en mode *headless*, tandis que le client traduit ces états en instructions visuelles.
 
-### Prédiction Locale (Joueur Local)
-- Lorsqu'un joueur appuie sur le bouton d'attaque, le client **n'attend pas** le serveur. Il joue immédiatement l'animation d'attaque et déclenche les effets visuels/sonores.
-- Le client envoie l'intention (`ActionRequest::Attack`) au serveur.
-- Si l'action est invalide (ex: cooldown non respecté, étourdissement), le serveur envoie une correction (`ActionDenied`), forçant le client à annuler l'animation (rollback) et revenir à l'état `Idle`.
+### 3.1. Composants et Graphes d'Animation
+L'architecture client s'appuiera sur les composants natifs de Bevy et sur des machines à états finis (FSM).
 
-### Interpolation et Extrapolation (Autres Joueurs et Monstres)
-- Les animations des autres entités sont pilotées par les paquets du serveur.
-- Si le serveur envoie un paquet de déplacement, le client place l'entité en état `Running` et interpole sa position.
-- Les attaques ennemies sont affichées au moment où le client reçoit l'événement du serveur (`EntityAttacked`). Pour compenser la latence visuelle, la "hitbox" ou la confirmation des dégâts est calculée par le serveur de manière rétroactive (lag compensation) ou au moment de l'impact serveur.
+```rust
+use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
 
-### Séparation de la Logique et de l'Esthétique
-- Le serveur tourne en mode "headless" (sans rendu) : il ne charge **jamais** les meshs ou les `AnimationPlayer`.
-- Le serveur ne connaît que les boîtes de collision (colliders), les temps de cast (incantation) et les cooldowns.
-- Le client lie la durée de l'animation à la durée de l'action dictée par le serveur.
+/// Représente l'état canonique d'une entité (partagé Client/Serveur)
+#[derive(Component, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum EntityState {
+    Idle,
+    Locomotion(LocomotionType),
+    Attacking(AttackAction),
+    Casting(SpellId),
+    HitRecovery,
+    Dead,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum LocomotionType { Walking, Running }
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum AttackAction { MeleeStrike(u8), RangedDraw }
+
+/// Composant local au client liant l'entité à ses nœuds d'animation
+#[derive(Component)]
+pub struct AnimationController {
+    pub graph_handle: Handle<AnimationGraph>,
+    pub node_indices: std::collections::HashMap<EntityState, AnimationNodeIndex>,
+    pub current_state: EntityState,
+}
+```
+
+### 3.2. Système de Résolution d'Animation
+Un système dédié côté client observera les mutations du composant `EntityState` et pilotera l'`AnimationPlayer` via l'`AnimationTransitions` pour effectuer le blending.
+
+```rust
+fn update_animations_system(
+    mut query: Query<(
+        &EntityState,
+        &mut AnimationController,
+        &mut AnimationPlayer,
+        &mut AnimationTransitions
+    ), Changed<EntityState>>,
+) {
+    for (new_state, mut controller, mut player, mut transitions) in query.iter_mut() {
+        if controller.current_state != *new_state {
+            if let Some(&node_index) = controller.node_indices.get(new_state) {
+                // Transition avec un fondu de 0.15 secondes
+                transitions.play(&mut player, *node_index, std::time::Duration::from_secs_f32(0.15));
+            }
+            controller.current_state = new_state.clone();
+        }
+    }
+}
+```
 
 ---
 
-## 4. Catalogue des Animations et États
+## 4. Topologie Réseau : Synchronisation, Prédiction et Rollback
 
-### A. Personnages Joueurs (PJ)
-Chaque classe ou type d'arme (Épée, Arc, Bâton) aura un set d'animations ("Animation Set").
+Le postulat de base est la souveraineté du serveur (Autorité Serveur). Cependant, pour pallier la latence perçue (RTT - Round Trip Time), le client emploie des algorithmes de prédiction locale et de réconciliation.
 
-**États de base :**
-- `Idle` (Repos) : Légère respiration, posture de combat si l'arme est dégainée.
-- `Walk` / `Run` : Déplacement classique.
-- `Jump` : (Si applicable) Saut et atterrissage.
-- `HitReact` (Touché) : Tressaillement lors de la réception d'un coup lourd.
-- `Death` : Effondrement au sol.
+### 4.1. Protocole de Communication (Exemple)
 
-**États de Combat :**
-- `Attack_Melee_1, 2, 3` : Combo d'attaques de mêlée.
-- `Cast_Start` : Début d'incantation d'un sort (mains en l'air, concentration).
-- `Cast_Release` : Relâchement de la magie (projection).
-- `Ranged_Draw` / `Ranged_Fire` : Bande l'arc, puis tire.
+```rust
+/// Paquet envoyé par le client au serveur
+#[derive(Serialize, Deserialize)]
+pub enum ClientMessage {
+    ActionRequest { action: ActionType, timestamp: u64 },
+    MovementInput { direction: Vec2, timestamp: u64 },
+}
 
-### B. Créatures et Monstres (PNJ)
-Les monstres auront des sets plus simples pour économiser la mémoire.
+/// Paquet envoyé par le serveur au client
+#[derive(Serialize, Deserialize)]
+pub enum ServerMessage {
+    ActionConfirmed { action_id: u64 },
+    ActionDenied { reason: DenialReason, rollback_state: EntityState },
+    StateSnapshot { entity_id: Entity, state: EntityState, position: Vec3, server_tick: u64 },
+}
+```
 
-- **Bête (ex: Loup) :** `Idle`, `Trot`, `Run`, `Bite` (Morsure), `Howl` (Hurlement/Aggro), `Death`.
-- **Humanoïde (ex: Gobelin) :** `Idle`, `Run`, `SwingWeapon` (Coup grossier), `Flee` (Fuite), `Death`.
-- **Boss :** Animations spécifiques pour des attaques de zone (ex: `GroundSmash` - Frappe au sol).
+### 4.2. Prédiction Locale et Rollback
+Lorsqu'un joueur local initie une action (ex: frappe à l'épée) :
+1. **Application Locale (Instant $T_0$) :** Le client mute immédiatement son `EntityState` à `Attacking(MeleeStrike(1))` et déclenche l'animation et les effets sonores associés. Il stocke cette intention dans un buffer circulaire d'états prédictifs.
+2. **Transmission :** L'événement `ActionRequest` est expédié au serveur.
+3. **Réconciliation (Instant $T_0 + RTT$) :**
+   - **Succès :** Le serveur valide l'action et broadcast l'événement aux autres clients. Le client local confirme l'état prédictif.
+   - **Échec (Rollback) :** Si le serveur rejette l'action (ex: ressource insuffisante, étourdissement serveur non encore reçu par le client), le client reçoit `ActionDenied`. Le système d'animation force alors une interruption abrupte de l'animation en cours pour revenir à l'état canonique dicté par le serveur (`rollback_state`), corrigeant ainsi la désynchronisation.
 
-### C. Sorts et Effets Visuels (VFX)
-Les sorts ne sont pas seulement des animations de personnages, mais des entités à part entière (particules, géométries).
+### 4.3. Algorithme de Compensation de Latence (Lag Compensation)
+Afin d'assurer la précision des attaques malgré le délai réseau, le serveur maintient un historique de l'état du monde (Positions, Hitboxes) sur les dernières millisecondes (généralement ~500ms).
 
-- **Particules (CPU/GPU) :** Utilisation d'un système de particules (ex: `bevy_hanabi`) pour le feu, la glace, les étincelles.
-- **Projectiles :** Boules de feu, flèches. Entités avec une vitesse, un composant `Transform`, et un modèle/particule attaché. L'animation est gérée par le mouvement lui-même.
-- **Effets de Zone (AoE) :** Cercles magiques au sol. Animations de shaders (défilement de textures UV, transparence) plutôt que des animations squelettiques.
-- **Hit Effects :** Petits flashs ou éclaboussures de sang (sprites 2D sous forme de billboards faisant face à la caméra) apparaissant brièvement lors d'un impact, très typiques des jeux PS2.
+Lors de la réception d'une requête d'attaque (ex: projectile ou coup ciblé) avec le `timestamp` client $T_c$ :
+1. Le serveur calcule l'écart de temps $\Delta t$ entre l'heure actuelle serveur $T_s$ et l'heure estimée de l'action du client $T_c$.
+2. Le serveur "rembobine" l'état physique du monde à $T_s - \Delta t$.
+3. Le serveur effectue le test de collision (Raycast ou Overlap de la Hitbox de l'arme avec les Hurtboxes des entités).
+4. Le résultat est résolu et les dommages sont appliqués, puis broadcastés aux clients.
+Cela garantit que si le client voyait sa cible dans son viseur, l'attaque touchera, indépendamment de la latence, évitant la frustration d'un tir "fantôme".
 
 ---
 
-## 5. Étapes d'Implémentation Recommandées
+## 5. Spécifications du Catalogue des Animations
 
-1. **Intégration d'un modèle de test :** Charger un modèle glTF simple avec une animation `Idle` et `Run`.
-2. **Machine à états du joueur :** Créer le système Bevy qui passe de `Idle` à `Run` selon les inputs locaux.
-3. **Contrôle d'Animation :** Connecter l'état au `AnimationPlayer` avec `AnimationTransitions` pour des passages fluides.
-4. **Synchronisation Réseau :** Recevoir la position d'un "Dummy" (joueur factice) depuis le réseau et faire jouer son animation `Run` quand sa position interpolée change.
-5. **Combats et Événements :** Ajouter l'animation d'attaque, bloquer le mouvement pendant l'attaque, et synchroniser l'apparition d'un effet visuel (particule) à une frame précise de l'animation.
+### 5.1. Matrice des États des Joueurs (PJ)
+Le système d'animation gère de manière modulaire les sets d'animations en fonction de l'arme équipée.
+
+| État (`EntityState`) | Condition de Déclenchement | Animation Associée (Clip) | Bouclage | Règles de Blending / Transition |
+|----------------------|---------------------------|---------------------------|----------|--------------------------------|
+| `Idle` | Absence d'input de mouvement ou d'action | Respiration lente | Oui | Transition douce depuis `Locomotion` |
+| `Locomotion(Walking)`| Vitesse > 0, Input de marche | Démarche d'exploration | Oui | Basé sur la vélocité (`BlendSpace` 1D) |
+| `Locomotion(Running)`| Input de course | Course soutenue | Oui | Basé sur la vélocité (`BlendSpace` 1D) |
+| `Attacking(MeleeStrike)` | Input d'attaque de mêlée validé | Coup d'arme (Combo 1/2/3) | Non | Annule `Locomotion`. Priorité absolue. |
+| `Casting(SpellId)` | Initiation d'un sort | Incantation (bras levés) | Oui | Ne peut être interrompu que par `HitRecovery` |
+| `HitRecovery` | Dommages encaissés dépassant le seuil de posture | Tressaillement (Flinch) | Non | Interrompt `Attacking` et `Casting` |
+| `Dead` | Points de vie à 0 | Effondrement physique | Non | Ne transitionne vers rien sauf `Idle` (Résurrection) |
+
+### 5.2. Comportements des PNJ et Boss
+Pour des raisons d'optimisation (LOD - Level of Detail pour l'animation), les créatures exploitent une FSM simplifiée.
+- **Créatures Standard :** Limité à `Idle`, `Locomotion`, `Aggro_Shout` et `Attack_Simple`.
+- **Boss :** Intégration d'événements d'animation ("Animation Notifies") synchronisés aux frames clés pour déclencher des tremblements de caméra (Camera Shake) ou spawner des AOE (Area of Effect) via le système `AnimationEvents` de Bevy.
+
+### 5.3. Architecture des Effets Visuels (VFX)
+Les effets visuels complètent l'animation pour retranscrire la lourdeur et l'impact des actions.
+
+1. **Particules GPU-Driven :**
+   Les magies et éléments environnementaux utilisent des systèmes de particules (via l'intégration de bibliothèques tierces compatibles Bevy comme `bevy_hanabi`). Les émetteurs sont attachés hiérarchiquement aux os spécifiques (ex: la main d'un mage via `BoneTarget`).
+2. **Shaders Polymorphes et Décalcomanies :**
+   Les AOE au sol exploitent des meshs plats avec des matériaux dotés de shaders de défilement UV (UV Scrolling) et de modification de canal Alpha temporelle, évitant l'instanciation coûteuse de géométries complexes.
+3. **Imposteurs Visuels (Billboards 2D) :**
+   Pour honorer l'esthétique Metin2/PS2, les impacts d'armes génèrent de brèves textures 2D orientées vers la caméra (Billboarding). Le serveur envoie l'événement `EntityHit`, le client instancie un quad éphémère (Durée de vie : ~0.15s) sur la position ciblée.
+
+---
+
+## 6. Séquencement du Déploiement et Intégration
+
+L'implémentation de ces spécifications suivra un ordonnancement incrémental :
+
+- **Phase 1 : Socle Technique (Core Animation)**
+  - Intégration du composant `AnimationController` et d'un modèle glTF de référence ("Dummy").
+  - Implémentation du système `update_animations_system` et test des transitions `Idle` <-> `Locomotion`.
+- **Phase 2 : FSM et Infrastructure Réseau**
+  - Mise en place du buffer de prédiction locale et de la logique de Rollback.
+  - Test de l'interruption abrupte (annulation de l'attaque par le serveur).
+- **Phase 3 : Équité Compétitive**
+  - Programmation de la structure de l'historique temporel (Snapshots) sur le serveur.
+  - Implémentation mathématique de l'algorithme de Lag Compensation pour la résolution des Hitboxes.
+- **Phase 4 : Polissage Visuel (VFX)**
+  - Attachement dynamique d'émetteurs de particules aux matrices de transformation des os.
+  - Intégration du système de billboards 2D pour les retours visuels d'impact.
