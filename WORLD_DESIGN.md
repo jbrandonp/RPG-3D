@@ -1,96 +1,179 @@
-# Conception du Monde et Level Design : Projet MMO Dark Fantasy
+# System / Level Design Document (SGDD)
+**Projet :** Mini-MMORPG Dark Fantasy (Architecture Bevy ECS)
+**Cible Visuelle :** Rétro PS2 (Low-poly, filtrage Nearest, WGPU)
 
-Ce document détaille la vision, les environnements, le bestiaire et les mécaniques du monde pour notre MMORPG indépendant. Le design est pensé pour s'intégrer avec une architecture technique moderne (Moteur Bevy, ECS, serveur autoritaire), tout en conservant une direction artistique rétro (style PS2 / Metin2).
-
----
-
-## 1. Vision et Ambiance (Dark Fantasy)
-
-### Direction Artistique
-- **Thème :** Un monde crépusculaire, poisseux et désespéré. La lumière est rare, le monde est en ruine suite à un cataclysme impie.
-- **Rendu Visuel (Rétro PS2) :** Modèles low-poly, textures basse résolution avec filtrage `Nearest` (pixelisé), brouillard volumétrique intense pour masquer la distance d'affichage courte (et optimiser les performances). Les couleurs dominantes sont le gris cendré, le rouge sang et le vert maladif.
-- **Ambiance Sonore :** Vents lugubres, tintements de cloches lointaines, bruits de pas amplifiés dans les donjons, râles étouffés des monstres.
-
-### Intégration Technique (Bevy Engine)
-- **Rendu WGPU :** Le brouillard est géré via un composant `FogSettings` global qui adapte sa densité selon la zone active.
-- **Eclairage :** Éclairage minimaliste. Les joueurs portent une lumière dynamique (composant `PointLight` avec un faible rayon) pour explorer.
+Ce document professionnel établit les standards de conception spatiale, l'équilibrage mathématique et le cahier des charges technique pour l'intégration dans le moteur Bevy.
 
 ---
 
-## 2. Structure de la Carte et Zones (World Map)
+## 1. Vision et Intentions de Design (Macro)
 
-Le monde est construit autour de "Chunks" gérés par un système de partitionnement spatial (Grid / Octree). Le serveur ne simule que les chunks contenant des joueurs.
+### 1.1 Direction Artistique et Thématique
+Un monde crépusculaire, poisseux et en ruine. Les distances d'affichage sont volontairement courtes, masquées par un brouillard volumétrique intense (bénéfique pour l'ambiance et les performances du moteur de rendu). La palette de couleurs est dominée par des gris cendrés, des rouges sang oxydés et des verts toxiques.
 
-### Zone 1 : Le Hameau des Cendres (Hub Central)
-- **Ambiance :** Un village en ruine fortifié, dernier rempart de l'humanité. Un immense feu de joie central éclaire la zone.
-- **Parcours :** Architecture radiale et sécurisante. Des tentes et des marchands entourent le feu.
-- **PNJ & Points d'intérêt :**
-  - Forgeron Damné (Artisanat).
-  - Marchand d'Âmes (Achat de consommables).
-- **Note Technique :** La zone possède un composant `SafeZone`. Un système serveur écoute les événements d'attaque (`AttackEvent`) et les annule si l'entité visée a le marqueur `SafeZone`.
+### 1.2 Core Game Loop (Boucle de Gameplay)
+1. **Préparation (Hub) :** Vente de butin, réparation, achat de consommables.
+2. **Exploration & Chasse (Zones Ouvertes) :** Navigation vers des points d'intérêt, combat contre des créatures (farm d'XP et de matériaux).
+3. **Épreuve (Donjons) :** Combat de boss instancié nécessitant un groupe.
+4. **Récompense & Retour :** Acquisition de butin rare et retour au hub (TP ou marche).
 
-### Zone 2 : La Forêt des Écorchés (Zone de Progression Initial)
-- **Ambiance :** Des arbres tordus sans feuilles, une brume épaisse, un sol boueux jonché de racines épineuses.
-- **Parcours :** Chemins sinueux et étroits. Les hors-pistes sont remplis de "Ronces Corrompues" (zones qui infligent un debuff de ralentissement via un composant `SpeedModifier { factor: 0.5 }`).
-- **Placement d'ennemis :** Des petits camps de monstres près de feux éteints. Les ennemis patrouillent le long des routes principales.
-
-### Zone 3 : Les Marais Sanglants (Zone Intermédiaire)
-- **Ambiance :** Eaux troubles rougeâtres, carcasses de créatures géantes, gaz toxiques verts.
-- **Parcours :** De petites îles interconnectées par des ponts pourris ou des passages dans l'eau. Marcher dans l'eau réduit l'agilité et attire certaines créatures.
-- **Note Technique :** L'eau est gérée par des "Trigger Volumes" (détection de collision via Bevy Rapier) qui ajoutent un composant `InWater` aux entités qui la traversent.
-
-### Zone 4 : La Cathédrale d'Obsidienne (Donjon Instancié)
-- **Ambiance :** Architecture gothique monumentale, vitraux brisés, pénombre percée par des bougies magiques.
-- **Parcours :** Structure linéaire sous forme de "Salles d'Épreuves". Les portes (`DoorComponent { locked: true }`) ne s'ouvrent que lorsque tous les ennemis de la salle (possédant un composant `RoomId`) sont vaincus.
-- **Note Technique (Instanciation) :** Côté serveur, chaque groupe qui entre crée une nouvelle collection d'entités avec un composant `InstanceId(UUID)`. Les requêtes ECS (Systems) filtrent systématiquement par `InstanceId` pour séparer les calculs entre les différents groupes de joueurs.
+### 1.3 Player Flow (Progression)
+Le joueur débute dans le Hub protégé. La progression est radiale, la difficulté augmentant avec la distance par rapport au Hub central.
 
 ---
 
-## 3. Bestiaire et Placement (IA et Combats)
+## 2. World Building et Metrics (Conception Spatiale)
 
-Les ennemis sont gérés par des arbres de comportement (Behavior Trees) ou des machines à états finis implémentées via des composants Bevy (ex: `State<EnemyState>`).
+### 2.1 Échelle et Métriques du Joueur
+Afin de garantir des collisions précises (via Bevy Rapier) et une navigation fluide :
+- **Unité de base (1u) :** 1 mètre dans le moteur.
+- **Taille du joueur (Hitbox) :** Cylindre de rayon `0.5u` et hauteur `1.8u`.
+- **Vitesse de déplacement (Base) :** `4.5u / seconde` (Marche/Course par défaut).
+- **Vitesse en combat :** `3.0u / seconde` (Pénalité d'engagement).
+- **Hauteur de saut :** Le jeu n'inclut pas de mécanique de saut complexe pour limiter les exploits topographiques (navigation via NavMesh 2.5D).
 
-| Ennemi | Zone | Comportement (IA) & Caractéristiques | Loots (Lâchés) |
-|---|---|---|---|
-| **Goule Cendrée** | Forêt | **Melee Swarm :** Fonce sur le joueur le plus proche dès qu'il entre dans l'Aggro Radius (`Sensor` collider). Attaque rapidement. | Ossements, Tissu déchiré |
-| **Corbeau de Sang** | Forêt | **Hit & Run :** Perché en hauteur, attaque en piqué puis s'éloigne. Géré avec une interpolation de trajectoire. | Plumes d'Ombre |
-| **Noyé en Armure** | Marais | **Tank / Embuscade :** Spawn dynamique sous l'eau quand un joueur approche. Lent, mais a des attaques de zone (AoE). | Éclats de Fer Rouillé |
-| **Prêtre Déchu (Boss)** | Donjon | **Phases Multiples :** <br>Phase 1 : Attaques à distance (Projectiles avec `Velocity`). <br>Phase 2 (50% HP) : Invoque des Goules et se téléporte. | Relique Impie, Arme Épique |
-
-### Le Système de Spawners
-Les ennemis ne sont pas placés manuellement un par un. Le Level Design utilise des "Nids" (Spawners) :
-- Entité avec le composant : `Spawner { enemy_type: EnemyType::Goule, cooldown: Timer, max_entities: 3, radius: 10.0 }`.
-- Un système Bevy (`spawner_system`) vérifie l'état du Spawner et instancie de nouveaux monstres si les anciens ont été éliminés.
-
----
-
-## 4. Objets, Équipements et Intégration ECS
-
-Les objets existent dans le monde sous forme de "Pickups" et dans l'inventaire sous forme de données.
-
-### Équipements
-- **Lame Rouillée d'Inquisiteur (Arme de base) :**
-  - Statistiques : Dégâts faibles, vitesse moyenne.
-  - Effet : 10% de chance d'appliquer l'altération "Tétanos" (DoT - Damage over Time).
-  - ECS : Ajoute un système asynchrone côté serveur appliquant `Health -= 2` toutes les secondes.
-- **Masse d'Os Lourd :**
-  - Statistiques : Dégâts lourds, très lent.
-  - Effet : Ignore 30% de l'armure (Calcul géré dans le `DamageCalculationSystem`).
-
-### Consommables
-- **Fiole de Sang Purifié :**
-  - Restaure instantanément une portion de la santé.
-  - Technique : Envoie un événement `HealEvent { target: Entity, amount: 50 }` intercepté par le serveur.
-- **Poussière d'Étoile Morte :**
-  - Booste temporairement la vitesse de déplacement et d'attaque.
-  - Technique : Ajoute temporairement un composant `Buff { duration: Timer::from_seconds(10.0) }` au joueur.
+### 2.2 Architecture des Chunks (Spatial Partitioning)
+La carte n'est pas chargée intégralement.
+- **Taille d'un Chunk :** `64u x 64u`.
+- **Distance de Rendu / Simulation :** `3x3 Chunks` centrés sur le joueur.
+- **Serveur :** Ne "tick" (met à jour les entités) que dans les chunks où se trouve au moins une connexion active.
 
 ---
 
-## 5. Synthèse Technique du Level Design
+## 3. Topologie des Zones et Landmarks
 
-Pour un MMO scalable développé avec Rust/Bevy, le level design doit respecter ces contraintes :
+### 3.1 Zone 1 : Le Hameau des Cendres (Hub Central / Safe Zone)
+- **Taille :** `128x128u` (4 Chunks).
+- **Landmark :** Le "Grand Bûcher" (émetteur de particules et source de lumière dynamique visible de loin).
+- **Flow :** Architecture circulaire fermée. Les sorties sont des goulets d'étranglement (Chokepoints) naturels (pont-levis brisé, porte défoncée).
+- **Règles Systémiques :** Dégâts joueurs et ennemis désactivés.
 
-1. **Pas de logique côté client :** Les portes, les dégâts de zone (Marais) et les comportements des monstres sont calculés uniquement sur le serveur. Le client ne gère que le rendu visuel et l'envoi d'inputs (Z, Q, S, D, Clics).
-2. **Streaming du Monde :** Le Level Designer construit la carte sur un éditeur (Tiled, Blender, ou éditeur custom), puis exporte les données en format léger (ex: JSON ou binaire). Le serveur charge ces données et instancie les colliders Rapier invisibles.
-3. **Data-Oriented Design :** Tout le contenu (HP des monstres, dégâts des armes) est stocké de manière contiguë en mémoire. Les équilibrages se font en modifiant des fichiers de configuration (Assets), rechargés à chaud (Hot-Reloading) par Bevy sans redémarrer le serveur.
+### 3.2 Zone 2 : La Forêt des Écorchés (Zone de Grind Initiale)
+- **Taille :** `256x256u` (16 Chunks).
+- **Landmark :** L'Arbre des Pendus (au centre nord, repère d'orientation sans ouvrir de carte).
+- **Flow :** Des routes sûres (`SpeedModifier x1.0`) et des bois denses remplis de "Ronces Corrompues" (`SpeedModifier x0.6`). Les joueurs sont incités à rester sur la route à bas niveau.
+
+### 3.3 Zone 3 : Les Marais Sanglants (Zone Intermédiaire)
+- **Taille :** `256x256u` (16 Chunks).
+- **Landmark :** La Carcasse du Léviathan (squelette géant servant de pont naturel).
+- **Flow :** Zones d'eau profonde limitant les déplacements.
+- **Règles Systémiques :** Trigger volumes d'eau profonde qui appliquent un statut `Wet` (vulnérabilité aux dégâts de foudre) et une pénalité de vitesse.
+
+### 3.4 Zone 4 : La Cathédrale d'Obsidienne (Donjon Instancié)
+- **Taille :** `128x256u` (Structure en couloir).
+- **Flow :** Salles verrouillées (`DoorComponent`). Obligation de purger l'Area of Interest (AoI) des ennemis ciblés.
+
+---
+
+## 4. Systems Design & Équilibrage (Balancing)
+
+### 4.1 Cibles Mathématiques Globales (Combat Pacing)
+L'équilibrage se base sur un **Time To Kill (TTK)** cible pour garantir un rythme "Rétro RPG" (les combats durent plusieurs secondes, la gestion des ressources est vitale).
+- **TTK Joueur vs Mob Normal (Niveau équivalent) :** `6 à 8 secondes`.
+- **TTK Mob vs Joueur (Niveau équivalent) :** `15 à 20 secondes` (laisse le temps de fuir ou d'utiliser une potion).
+- **Global Cooldown (GCD) :** `1.5s` entre les attaques basiques.
+
+### 4.2 Bestiaire, IA et Tables de Loot (Équilibrage Niveau 1-5)
+
+| Entité | HP Base | Vitesse | Dégâts (DPS) | XP | Taux de Drop (Loot Table) |
+|---|---|---|---|---|---|
+| **Joueur (Niv 1)** | 100 | 4.5u/s | 12 | N/A | N/A |
+| **Goule Cendrée** | 60 | 5.0u/s | 6 | 20 | Ossement (40%), Tissu (15%) |
+| **Corbeau de Sang** | 40 | 6.5u/s | 8 | 25 | Plume (30%), Potion Mineure (5%) |
+| **Noyé en Armure** | 150 | 2.5u/s | 15 | 60 | Fer Rouillé (50%), Arme Magique (2%) |
+| **Prêtre (Boss N.5)**| 1200 | 3.5u/s | 25 | 500 | Relique Impie (100%), Arme Épique (10%) |
+
+*Note de Progression XP :*
+Niveau 1 -> 2 = 100 XP (5 Goules). Niveau 2 -> 3 = 300 XP. Évolution exponentielle modérée (`Base * 1.5^N`).
+
+### 4.3 Équipement et Mathématiques des Dégâts
+Formule de résolution des dégâts côté serveur :
+`Dégâts Subis = (Dégâts Arme * Modificateur Statistique) * (100 / (100 + Armure Cible))`
+
+---
+
+## 5. Cahier des Charges Technique (Bevy ECS Architecture)
+
+Afin d'implémenter ce document dans notre stack Rust/Bevy (Serveur Autoritaire), voici les structures et requêtes de base requises.
+
+### 5.1 Définition des Composants (Rust Pseudo-code)
+
+```rust
+use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
+
+// Identité réseau et serveur
+#[derive(Component)]
+pub struct NetworkId(pub u64);
+
+#[derive(Component)]
+pub struct InstanceId(pub uuid::Uuid); // Pour séparer les instances (Donjon vs Open World)
+
+// Statistiques vitales de combat
+#[derive(Component, Serialize, Deserialize)]
+pub struct CombatStats {
+    pub hp: f32,
+    pub max_hp: f32,
+    pub base_damage: f32,
+    pub armor: f32,
+}
+
+// Composant pour l'état de l'environnement
+#[derive(Component)]
+pub struct MovementModifier {
+    pub multiplier: f32, // ex: 0.5 dans les Marais, 1.0 sur route
+}
+
+// Spawner de Level Design (Gère les nids d'ennemis)
+#[derive(Component)]
+pub struct MobSpawner {
+    pub mob_type: String, // ID dans les assets
+    pub spawn_radius: f32,
+    pub max_alive: usize,
+    pub timer: Timer,
+}
+```
+
+### 5.2 Systèmes et Résolution des Dégâts
+
+La philosophie "Server-Authoritative" implique que le client envoie des "Intentions", et le serveur exécute ce système :
+
+```rust
+// Evénement généré par les paquets réseau entrants
+pub struct AttackIntentEvent {
+    pub attacker_net_id: u64,
+    pub target_net_id: u64,
+    pub skill_id: u32,
+}
+
+// Système de résolution de combat côté serveur
+pub fn combat_resolution_system(
+    mut attack_events: EventReader<AttackIntentEvent>,
+    mut query_stats: Query<(&NetworkId, &mut CombatStats)>,
+    query_safe_zone: Query<&GlobalTransform, With<SafeZone>>,
+) {
+    for event in attack_events.read() {
+        // Validation 1 : Vérifier la distance et le Line of Sight (LoS)
+        // Validation 2 : Vérifier que ce n'est pas en Safe Zone
+
+        let mut attacker_dmg = 0.0;
+
+        // ... (Récupération des stats de l'attaquant) ...
+
+        // Application des dégâts sur la cible
+        if let Some((_, mut target_stats)) = query_stats.iter_mut().find(|(id, _)| id.0 == event.target_net_id) {
+            let mitigated_damage = attacker_dmg * (100.0 / (100.0 + target_stats.armor));
+            target_stats.hp -= mitigated_damage;
+
+            // Si HP <= 0, générer l'événement MobDeathEvent (qui trigger le LootSystem)
+        }
+    }
+}
+```
+
+### 5.3 Streaming du Monde et Hot-Reloading
+- **Fichiers de Scène (Assets) :** Le Level Design est stocké sous forme de fichiers `.ron` (Rusty Object Notation) ou `.json`.
+- **Découplage Client/Serveur :**
+  - **Fichier `zone_1_server.json` :** Contient les Spawners, Colliders Rapier (Murs, NavMesh), Triggers (SafeZone).
+  - **Fichier `zone_1_client.glb` (GLTF) :** Contient uniquement les maillages 3D, les textures et l'éclairage.
+- **Avantage technique :** Les concepteurs peuvent ajuster les `CombatStats` dans un fichier JSON, et le composant `AssetServer` de Bevy mettra à jour l'équilibrage en temps réel sans que le serveur n'ait besoin d'être redémarré (Hot-Reloading natif de Bevy).
