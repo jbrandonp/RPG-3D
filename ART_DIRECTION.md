@@ -22,7 +22,7 @@ Afin de maximiser les performances côté client, d'assurer une compatibilité t
 L'adoption d'un style "Retro 3D" impose des directives strictes quant à la création des assets (modèles, textures, éclairages).
 
 * **Topologie (Low-Poly Strict) :**
-  * Personnages jouables (Player Characters) et PNJ principaux : **1 500 à 3 000 polygones max**.
+  * Personnages jouables (Player Characters) et PNJ principaux : **1 500 à 4 000 polygones max**.
   * Monstres (Mobs) basiques : **500 à 1 500 polygones max**.
   * Décor statique : Utiliser le "culling" intensif. Topologie simplifiée à l'extrême.
 * **Texturing (Hand-Painted & Dithering) :**

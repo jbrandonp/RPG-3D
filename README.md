@@ -14,7 +14,7 @@ Déplacement, attaque, ennemis, points de vie, inventaire, objets, quêtes et pr
 
 ### Bloc 3 — Le monde
 
-Cartes, zones, villes, monstres, PNJ, ressources, donjons et règles de zone. Les zones, PNJ, classes, quêtes et règles d'exploration sont les fondations du contenu jouable.
+Cartes, zones, villes, monstres, PNJ, ressources, donjons et règles de zone. Les zones, PNJ, compétences, quêtes et règles d'exploration sont les fondations du contenu jouable.
 
 ### Bloc 4 — Multijoueur et réseau
 
@@ -30,7 +30,7 @@ Comptes, personnages, inventaire, quêtes, positions, monnaies et état du monde
 
 ### Bloc 7 — Contenu
 
-Monstres, objets, quêtes, dialogues, zones, récompenses, événements et activités répétables. Un MMO sans contenu paraît vide, même techniquement parfait. Les donjons, classes, métiers, boss et systèmes de groupe arrivent une fois le noyau fonctionnel.
+Monstres, objets, quêtes, dialogues, zones, récompenses, événements et activités répétables. Un MMO sans contenu paraît vide, même techniquement parfait. Les donjons, talents, métiers, boss et systèmes de groupe arrivent une fois le noyau fonctionnel.
 
 ### Bloc 8 — Technique invisible
 
@@ -58,7 +58,7 @@ Comptes, création de personnage, sauvegarde des stats, inventaire et progressio
 
 ### Phase 5 — Contenu jouable
 
-PNJ, quêtes, objets, boutique, zones, monstres variés, petit donjon ou arène. Les systèmes de groupes, métiers, classes et quêtes enrichissent le cœur de jeu une fois les bases techniques en place.
+PNJ, quêtes, objets, boutique, zones, monstres variés, petit donjon ou arène. Les systèmes de groupes, métiers, archétypes et quêtes enrichissent le cœur de jeu une fois les bases techniques en place.
 
 ### Phase 6 — Polish
 

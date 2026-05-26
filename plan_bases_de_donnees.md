@@ -15,7 +15,7 @@ La persistance de l'univers s'articule autour des entités fondamentales suivant
 *   **`users`** : Gestion des comptes joueurs, de la sécurité et de l'authentification.
     *   *Colonnes suggérées* : `id` (UUID), `username`, `email`, `password_hash`, `created_at`, `last_login`, `status` (actif, banni).
 *   **`characters`** : Représentation des avatars en jeu, dépendants des utilisateurs.
-    *   *Colonnes suggérées* : `id` (UUID), `user_id` (FK), `name`, `level`, `experience`, `health`, `mana`, `gold`, `position_x`, `position_y`, `position_z`, `zone_id`.
+    *   *Colonnes suggérées* : `id` (UUID), `user_id` (FK), `name`, `level`, `experience`, `health`, `mana`, `currency_copper`, `position_x`, `position_y`, `position_z`, `zone_id`.
 *   **`inventory_items`** : Enregistrement de tous les objets possédés ou équipés par les personnages.
     *   *Colonnes suggérées* : `id` (UUID), `character_id` (FK), `item_template_id`, `quantity`, `durability`, `is_equipped`, `slot_id`.
 *   **`quests_progress`** : Suivi asynchrone de l'état des quêtes pour chaque joueur.
@@ -54,10 +54,10 @@ La sécurité de l'économie repose sur le principe d'**autorité du serveur**. 
     ```sql
     BEGIN;
     -- Verrouillage de la ligne acheteur et prélèvement (si solde suffisant)
-    UPDATE characters SET gold = gold - 100 WHERE id = :buyer_id AND gold >= 100 RETURNING gold;
+    UPDATE characters SET currency_copper = currency_copper - 100 WHERE id = :buyer_id AND currency_copper >= 100 RETURNING currency_copper;
 
     -- Crédit du vendeur
-    UPDATE characters SET gold = gold + 100 WHERE id = :seller_id;
+    UPDATE characters SET currency_copper = currency_copper + 100 WHERE id = :seller_id;
 
     -- Transfert de propriété de l'objet
     UPDATE inventory_items SET character_id = :buyer_id, is_equipped = false WHERE id = :item_id AND character_id = :seller_id;
