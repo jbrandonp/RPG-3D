@@ -55,8 +55,8 @@ Les bruitages d'action doivent transmettre le poids et l'impact sans jamais deve
 
 ### 3.2. Races, Créatures et Voix
 *   **Humains :** Cris d'effort (saut, attaque, dégâts) mixés très bas, voix posées.
-*   **Nains :** Voix rocailleuses, chaleureuses. Bruits de pas lourds (résonance sur la pierre).
-*   **Gobelins :** Grognements gutturaux mais feutrés. Déplacements rapides (pattes légères). Aucun cri perçant n'est toléré.
+*   **Rôdeurs :** Voix rocailleuses, chaleureuses. Bruits de pas lourds (résonance sur la pierre).
+*   **Effarés :** Grognements gutturaux mais feutrés. Déplacements rapides (pattes légères). Aucun cri perçant n'est toléré.
 *   **Déplacements (Foley) :** Le bruit des pas (herbe, pierre, bois, terre) est le son le plus entendu du jeu. Il doit être rythmique, relaxant, et traité avec un soin extrême pour ne pas lasser.
 
 ---
@@ -79,7 +79,7 @@ L'interface est omniprésente. Ses sons s'inspirent du concept de "UI ASMR" (int
 Afin d'assurer une qualité professionnelle, l'intégration des assets sonores dans le moteur **Bevy** doit respecter les règles suivantes.
 
 ### 5.1. Normes de Fichiers
-*   **Fréquence d'échantillonnage :** 44.1 kHz ou 48 kHz (uniformiser sur tout le projet, idéalement 48 kHz).
+*   **Fréquence d'échantillonnage :** 48 kHz (uniformiser obligatoirement sur tout le projet).
 *   **Profondeur de bit :** 16-bit ou 24-bit.
 *   **Formats :**
     *   `.ogg` (Vorbis) : Pour les musiques, les longues ambiances et la météo (fichiers lourds, streaming).
@@ -98,7 +98,7 @@ Pour garantir une cohérence de volume (loudness) et éviter de fatiguer le joue
 *   **Variation Aléatoire (Anti-Répétitivité) :**
     *   *Pitch :* Tout effet sonore répétitif (pas, coups d'épée) doit se voir appliquer un décalage aléatoire de pitch (ex: $\pm 5\%$) à chaque lecture par le moteur Bevy.
     *   *Volume :* Légère variation de volume (ex: $\pm 2$ dB) par lecture.
-*   **Priorisation / Concurrency :** Limiter le nombre de sons simultanés. Si plus de 5 Gobelins attaquent, les sons d'attaque doivent être limités (voice stealing / culling) pour ne pas créer un chaos sonore ou saturer la sortie master.
+*   **Priorisation / Concurrency :** Limiter le nombre de sons simultanés. Si plus de 5 Effarés attaquent, les sons d'attaque doivent être limités (voice stealing / culling) pour ne pas créer un chaos sonore ou saturer la sortie master.
 
 ---
 
@@ -124,8 +124,8 @@ Une organisation stricte est requise pour tous les fichiers audios importés dan
     *   `FOL_Footstep_Grass_Run_01.wav`
     *   `FOL_Footstep_Stone_Walk_03.wav`
 *   **Créatures (CRE) :**
-    *   `CRE_Goblin_Aggro_01.wav`
-    *   `CRE_Dwarf_Effort_02.wav`
+    *   `CRE_Effare_Aggro_01.wav`
+    *   `CRE_Rodeur_Effort_02.wav`
 *   **Interface (UI) :**
     *   `UI_Hover_Button_01.wav`
     *   `UI_Click_Confirm_01.wav`

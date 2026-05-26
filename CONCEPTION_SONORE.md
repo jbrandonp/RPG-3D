@@ -28,7 +28,7 @@ La direction audio de ce projet a pour objectif de recréer la nostalgie des pre
 *   **Moteur** : Intégration native via le moteur **Bevy** (utilisation de `bevy_audio` ou d'un plugin dédié comme `bevy_kira_audio` pour une gestion avancée).
 *   **Format des Fichiers** :
     *   *Musiques (BGM)* : Ogg Vorbis (`.ogg`) à 128 kbps (optimisation de l'espace mémoire tout en conservant la qualité requise pour le style rétro).
-    *   *Bruitages (SFX)* : WAV (`.wav`) en 16-bit / 44.1 kHz pour les sons nécessitant du punch (impacts, UI).
+    *   *Bruitages (SFX)* : WAV (`.wav`) en 16-bit / 48 kHz pour les sons nécessitant du punch (impacts, UI).
 *   **Spatialisation (3D Audio)** : Utilisation d'un modèle d'atténuation logarithmique pour les effets diégétiques (bruits de pas, monstres). Les sons ambiants globaux seront lus en stéréo standard (2D).
 
 ### 2.2. Gestion Dynamique

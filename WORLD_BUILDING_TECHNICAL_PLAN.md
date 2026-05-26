@@ -62,8 +62,8 @@ L'architecture du monde repose sur une stricte séparation entre le **Serveur Au
 - **Server-side** : Le serveur "Headless" ne charge aucun asset graphique. Il parse des fichiers de définition de scène structurés (JSON, RON) contenant uniquement les identifiants d'entités, leurs positions (Transform), rotations et échelles.
 
 ### 4.2. Physique et Navigation (Serveur Autoritaire)
-- **NavMesh (Navigation Mesh)** : La topographie navigable (sol, escaliers) est compilée sous forme de NavMesh statique. Il est utilisé par le serveur pour le *Pathfinding* des PNJ/Monstres et pour valider (Anti-Cheat) les déplacements soumis par les clients.
-- **Colliders Primitifs** : Aucun *Mesh Collider* complexe n'est utilisé. L'environnement physique (murs, obstacles) est représenté côté serveur par des géométries primitives strictes (Box, Sphere, Capsule, Cylinder) gérées par un moteur physique intégré (ex: Rapier3D).
+- **NavMesh (Navigation Mesh)** : La topographie navigable (sol, escaliers) est compilée sous forme de NavMesh statique. Il est utilisé **uniquement** par le serveur pour le *Pathfinding* des PNJ/Monstres.
+- **Colliders Primitifs (Validation Anti-Cheat)** : Aucun *Mesh Collider* complexe n'est utilisé. L'environnement physique (murs, obstacles) est représenté côté serveur par des géométries primitives strictes (Box, Sphere, Capsule, Cylinder) gérées par un moteur physique intégré (ex: Rapier3D). **C'est ce moteur physique qui sert à valider (Anti-Cheat) les déplacements soumis par les clients.**
   - *Exemple ECS* : Un bâtiment visuel côté client correspond côté serveur à une entité dotée d'un `Transform` et d'un `Collider::cuboid(hx, hy, hz)`.
 
 ### 4.3. Gestion des Entités par Biome
@@ -86,7 +86,7 @@ La logique de peuplement et d'interaction s'articule autour de volumes invisible
 - Volumes (Cylindres ou AABB) dédiés à la génération d'entités.
 - Composants ECS serveur :
   - `SpawnZone`: Identifie le volume.
-  - `SpawnerConfig`: Définit le type d'entité (ex: "Loup_Gris"), le délai de réapparition (Cooldown), et la limite de population locale (MaxCap).
+  - `SpawnerConfig`: Définit le type d'entité (ex: "Rodeur_SousBois"), le délai de réapparition (Cooldown), et la limite de population locale (MaxCap).
 - *Workflow* : Un `System` serveur vérifie la population de la zone à intervalles réguliers et génère de nouvelles entités si nécessaire, en calculant une position aléatoire valide sur le NavMesh local.
 
 **B. Zones de Déclenchement (Triggers / Teleporters)**

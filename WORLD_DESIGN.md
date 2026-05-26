@@ -77,18 +77,18 @@ L'équilibrage se base sur un **Time To Kill (TTK)** cible pour garantir un ryth
 
 | Entité | HP Base | Vitesse | Dégâts (DPS) | XP | Taux de Drop (Loot Table) |
 |---|---|---|---|---|---|
-| **Joueur (Niv 1)** | 100 | 4.5u/s | 12 | N/A | N/A |
+| **Joueur (Niv 1)** | 100 | 4.5u/s | 8 | N/A | N/A |
 | **Goule Cendrée** | 60 | 5.0u/s | 6 | 20 | Ossement (40%), Tissu (15%) |
-| **Corbeau de Sang** | 40 | 6.5u/s | 8 | 25 | Plume (30%), Potion Mineure (5%) |
-| **Noyé en Armure** | 150 | 2.5u/s | 15 | 60 | Fer Rouillé (50%), Arme Magique (2%) |
+| **Corbeau de Sang** | 50 | 6.5u/s | 5 | 25 | Plume (30%), Potion Mineure (5%) |
+| **Noyé en Armure** | 100 | 2.5u/s | 7 | 60 | Fer Rouillé (50%), Arme Magique (2%) |
 | **Prêtre (Boss N.5)**| 1200 | 3.5u/s | 25 | 500 | Relique Impie (100%), Arme Épique (10%) |
 
 *Note de Progression XP :*
-Niveau 1 -> 2 = 100 XP (5 Goules). Niveau 2 -> 3 = 300 XP. Évolution exponentielle modérée (`Base * 1.5^N`).
+Niveau 1 -> 2 = 565 XP (28 Goules). Évolution exponentielle (`Base * (N^2.5)`).
 
 ### 4.3 Équipement et Mathématiques des Dégâts
 Formule de résolution des dégâts côté serveur :
-`Dégâts Subis = (Dégâts Arme * Modificateur Statistique) * (100 / (100 + Armure Cible))`
+`Dégâts Subis = (Dégâts Arme * Modificateur Statistique) * (1 - (Armure / (Armure + (Niveau Attaquant * 50))))`
 
 ---
 
