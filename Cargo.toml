@@ -1,0 +1,8 @@
+[package]
+name = "elaras_black_mist"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = { version = "0.13", features = ["png", "jpeg"] }
+# NOTE: Using Bevy 0.13 as it's the current stable version for these features
