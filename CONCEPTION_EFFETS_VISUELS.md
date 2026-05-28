@@ -208,3 +208,57 @@ pub fn process_diurnal_cycle_system(
     }
 }
 ```
+
+---
+
+## 5. Plan d'Action et Sprint (Durée : 6 mois)
+
+Afin de garantir une implémentation robuste et conforme aux directives architecturales (style PS2, frugalité computationnelle, isolation de l'état), la conception et le développement des Effets Visuels (VFX) seront étalés sur un sprint global de 6 mois, divisé en 6 jalons (Milestones) mensuels.
+
+### Milestone 1 : Fondation et Architecture Réseau (Mois 1)
+**Objectif :** Établir le canal de communication entre le serveur autoritaire et le client passif pour le déclenchement des VFX.
+*   **Tâches :**
+    *   Implémentation de la structure `NetEventVisualEffect` et sérialisation/désérialisation (Serde).
+    *   Création du `EventReader` côté client pour intercepter les paquets VFX.
+    *   Mise en place de l'énumération `StandardEffects` comme dictionnaire initial.
+    *   **Livrable :** Le client est capable de recevoir des événements "dummy" du serveur et de les logger localement.
+
+### Milestone 2 : Système de Billboarding et Rendu 2D (Mois 2)
+**Objectif :** Rendre les premières particules statiques orientées face caméra.
+*   **Tâches :**
+    *   Implémentation du composant `BillboardConstraint` et du système `compute_billboard_orientation_system`.
+    *   Configuration du *Sampler* WGPU en `Nearest-Neighbor` pour désactiver le filtrage bilinéaire.
+    *   Mise en place de la gestion des *Vertex Colors* (pas de PBR).
+    *   **Livrable :** Affichage d'un Quad (2D planaire) texturé qui suit constamment la caméra du joueur.
+
+### Milestone 3 : Cycle de Vie et Instanciation Additive (Mois 3)
+**Objectif :** Gérer l'apparition, le mélange colorimétrique et la disparition des effets magiques.
+*   **Tâches :**
+    *   Implémentation de `VolatileLifetime` et `garbage_collect_volatile_effects_system` pour la destruction propre (Fire & Forget).
+    *   Configuration de l'`AlphaMode::Add` et du `unlit: true` dans le pipeline de rendu WGPU de Bevy.
+    *   Implémentation d'effets basiques (Nova de Feu, Impact Magique) via `process_incoming_effect_events_system`.
+    *   **Livrable :** Le client peut générer des explosions lumineuses temporaires sur réception d'un événement réseau.
+
+### Milestone 4 : Éclairage Dynamique Frugal (Mois 4)
+**Objectif :** Apporter un impact visuel aux VFX sans casser les performances.
+*   **Tâches :**
+    *   Intégration de `PointLightBundle` volatiles attachés aux VFX (ex: flash lumineux court).
+    *   Désactivation stricte des ombres (`shadows_enabled: false`) sur ces sources lumineuses.
+    *   Limitation hardcodée du nombre maximum de lumières dynamiques simultanées par scène locale.
+    *   **Livrable :** Les explosions génèrent de la lumière colorée qui se reflète sur la géométrie environnante.
+
+### Milestone 5 : Atmosphère, Fog et Cycle Diurne (Mois 5)
+**Objectif :** Modifier globalement l'ambiance visuelle du client en fonction des états du serveur (Heure, Météo).
+*   **Tâches :**
+    *   Création de la ressource `EnvironmentAtmosphere`.
+    *   Implémentation de `process_diurnal_cycle_system` pour interpoler l'`AmbientLight` (Couleur/Intensité).
+    *   Configuration du `FogSettings` pour reproduire le "Clipping PS2" exponentiel/linéaire.
+    *   **Livrable :** Le monde passe progressivement du jour à la nuit, avec une altération des teintes et de la densité du brouillard.
+
+### Milestone 6 : Object Pooling et Optimisations Finales (Mois 6)
+**Objectif :** Remplacer les Spawns/Despawns massifs par un pool préalloué pour stabiliser le framerate lors de combats massifs.
+*   **Tâches :**
+    *   Création d'une structure `VfxPool` pré-instanciant X entités inactives.
+    *   Refactoring de `process_incoming_effect_events_system` pour activer/désactiver les entités du pool au lieu d'utiliser `commands.spawn`.
+    *   Profilage GPU/CPU sur des scénarios de stress test (ex: 50 joueurs lançant un sort simultanément).
+    *   **Livrable :** Un système VFX robuste garantissant aucun pic d'allocation mémoire, validé pour les configurations cibles.
